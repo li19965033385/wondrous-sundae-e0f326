@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="page-header-content">
+      <h1>关于 {{ site_name }}</h1>
+      <p class="page-desc">{{ site_desc_cn }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container content-page">
+    <div class="about-content">
+      <h2>我们的使命</h2>
+      <p>{{ site_name }} 致力于为AI工具使用者提供全面、客观、高质量的评测、教程和资源指南。我们相信AI技术应该为每个人所用，无论你是开发者、创作者还是企业用户。</p>
+
+      <h2>我们做什么</h2>
+      <ul>
+        <li><strong>深度评测：</strong>对主流AI工具进行全面测试和对比分析</li>
+        <li><strong>实战教程：</strong>提供Step-by-step的AI工具使用教程</li>
+        <li><strong>行业趋势：</strong>追踪最新的AI技术发展和行业动态</li>
+        <li><strong>资源推荐：</strong>精选高质量的AI工具和学习资源</li>
+      </ul>
+
+      <h2>内容特色</h2>
+      <ul>
+        <li>中英双语内容，覆盖全球AI工具信息</li>
+        <li>客观公正的评测，不偏袒任何品牌</li>
+        <li>实用的教程，注重实际操作</li>
+        <li>实时更新的行业动态</li>
+      </ul>
+
+      <h2>联系我们</h2>
+      <p>如有任何建议或合作意向，欢迎通过以下方式联系我们：</p>
+      <ul>
+        <li>📧 邮箱：contact@aitoolshub.com</li>
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}

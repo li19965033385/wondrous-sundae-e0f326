@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="page-header-content">
+      <span class="page-icon">{{ category.icon }}</span>
+      <h1>{{ category.name_cn }}</h1>
+      <p class="page-desc">{{ category.desc }}</p>
+      <span class="page-count">{{ total }} 篇文章</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <!-- Category Ad -->
+    <div class="ad-container">
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE" data-ad-slot="YOUR_AD_SLOT_HERE" data-ad-format="auto"></ins>
+      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <div class="archive-list">
+      {% for article in articles %}
+      <article class="archive-item">
+        <div class="archive-meta">
+          <span class="archive-date">{{ article.date }}</span>
+          <span class="archive-read">{{ article.read_time|default(10) }} 分钟</span>
+        </div>
+        <h2 class="archive-title"><a href="/article/{{ article.slug }}/">{{ article.title_cn|default(article.title) }}</a></h2>
+        <p class="archive-desc">{{ article.description_cn|default(article.description) }}</p>
+        <div class="archive-tags">
+          {% for tag in article.tags[:4] %}
+          <a href="/tag/{{ slugify(tag) }}/" class="tag">#{{ tag }}</a>
+          {% endfor %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="article-page">
+  <div class="container">
+    <div class="article-layout">
+      <!-- Main Content -->
+      <div class="article-main">
+        <header class="article-header">
+          <div class="article-meta-top">
+            <a href="/category/{{ article.category }}/" class="article-category">
+              {{ categories[article.category].icon }} {{ categories[article.category].name_cn }}
+            </a>
+            <time datetime="{{ article.date }}">{{ article.date }}</time>
+            <span>{{ article.read_time|default(10) }} 分钟阅读</span>
+          </div>
+          <h1 class="article-title">{{ article.title_cn|default(article.title) }}</h1>
+          <p class="article-desc">{{ article.description_cn|default(article.description) }}</p>
+          <div class="article-tags">
+            {% for tag in article.tags %}
+            <a href="/tag/{{ slugify(tag) }}/" class="tag">#{{ tag }}</a>
+            {% endfor %}
+          </div>
+        </header>
+
+        <!-- Article Ad Top -->
+        <div class="ad-in-article">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE"
+               data-ad-slot="YOUR_AD_SLOT_HERE"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <!-- Article Body -->
+        <div class="article-body">
+          {{ article.body|safe }}
+        </div>
+
+        <!-- Article Ad Bottom -->
+        <div class="ad-in-article">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE"
+               data-ad-slot="YOUR_AD_SLOT_HERE"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <!-- Share -->
+        <div class="article-share">
+          <span>分享本文：</span>
+          <a href="https://twitter.com/intent/tweet?text={{ article.title }}&url={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener">Twitter</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ site_url }}/article/{{ article.slug }}/&title={{ article.title }}" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+
+        <!-- Related Articles -->
+        {% if related %}
+        <section class="related-articles">
+          <h2>📌 相关文章</h2>
+          <div class="related-grid">
+            {% for r in related %}
+            <a href="/article/{{ r.slug }}/" class="related-card">
+              <span class="related-cat">{{ categories[r.category].icon }}</span>
+              <h3>{{ r.title_cn|default(r.title) }}</h3>
+              <p>{{ r.description_cn|default(r.description)|truncate(80) }}</p>
+              <span class="related-date">{{ r.date }}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="article-sidebar">
+        <!-- Sidebar Ad -->
+        <div class="ad-sidebar">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE"
+               data-ad-slot="YOUR_AD_SLOT_HERE"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+
+        <!-- Table of Contents -->
+        <div class="sidebar-widget toc-widget" id="toc">
+          <h3>📑 目录</h3>
+          <ul id="tocList"></ul>
+        </div>
+
+        <!-- Recent Posts -->
+        <div class="sidebar-widget">
+          <h3>📝 最新文章</h3>
+          <ul class="sidebar-post-list">
+            {% for a in recent_articles[:5] %}
+            <li>
+              <a href="/article/{{ a.slug }}/">{{ a.title_cn|default(a.title) }}</a>
+              <span class="sidebar-post-date">{{ a.date }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Categories -->
+        <div class="sidebar-widget">
+          <h3>📂 分类</h3>
+          <ul class="sidebar-cat-list">
+            {% for cid, cat in categories.items() %}
+            <li>
+              <a href="/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn }}</a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Tags -->
+        <div class="sidebar-widget">
+          <h3>🏷️ 标签</h3>
+          <div class="sidebar-tags">
+            {% for tag in tags[:20] %}
+            <a href="/tag/{{ slugify(tag) }}/" class="tag-sm">{{ tag }}</a>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Sidebar Ad 2 -->
+        <div class="ad-sidebar">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE"
+               data-ad-slot="YOUR_AD_SLOT_HERE"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+      </aside>
+    </div>
+  </div>
+</article>
+
+{% block extra_scripts %}
+<script>
+// Generate table of contents from article headings
+document.addEventListener('DOMContentLoaded', function() {
+  const body = document.querySelector('.article-body');
+  const tocList = document.getElementById('tocList');
+  if (body && tocList) {
+    const headings = body.querySelectorAll('h2, h3');
+    headings.forEach(function(h, i) {
+      const id = 'section-' + i;
+      h.setAttribute('id', id);
+      const li = document.createElement('li');
+      li.className = h.tagName === 'H2' ? 'toc-h2' : 'toc-h3';
+      const a = document.createElement('a');
+      a.href = '#' + id;
+      a.textContent = h.textContent;
+      li.appendChild(a);
+      tocList.appendChild(li);
+    });
+  }
+});
+</script>
+{% endblock %}
+{% endblock %}

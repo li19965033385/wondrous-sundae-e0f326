@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>{{ page_title }}</title>
+<meta name="description" content="{{ page_description }}">
+<link rel="canonical" href="{{ site_url }}{{ page_url }}">
+
+<!-- Open Graph -->
+<meta property="og:type" content="{{ og_type|default('website') }}">
+<meta property="og:title" content="{{ page_title }}">
+<meta property="og:description" content="{{ page_description }}">
+<meta property="og:url" content="{{ site_url }}{{ page_url }}">
+<meta property="og:site_name" content="{{ site_name }}">
+<meta property="og:image" content="{{ site_url }}{{ og_image|default('/img/og-default.jpg') }}">
+<meta property="og:locale" content="zh_CN">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ page_title }}">
+<meta name="twitter:description" content="{{ page_description }}">
+<meta name="twitter:image" content="{{ site_url }}{{ og_image|default('/img/og-default.jpg') }}">
+
+<!-- Schema.org JSON-LD -->
+<script type="application/ld+json">
+{{ website_ld|default('') }}
+</script>
+{% if breadcrumbs %}
+<script type="application/ld+json">
+{{ breadcrumbs }}
+</script>
+{% endif %}
+{% if faq_ld %}
+<script type="application/ld+json">
+{{ faq_ld }}
+</script>
+{% endif %}
+{% if ld_json %}
+<script type="application/ld+json">
+{{ ld_json }}
+</script>
+{% endif %}
+
+<!-- Styles -->
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Google AdSense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID_HERE"
+     crossorigin="anonymous"></script>
+
+<!-- RSS -->
+<link rel="alternate" type="application/rss+xml" title="{{ site_name }} - RSS Feed" href="{{ site_url }}/rss.xml">
+
+<!-- Favicon -->
+<link rel="icon" href="/static/img/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
+
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<!-- Navigation -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="site-logo">
+      <span class="logo-icon">🤖</span>
+      <span class="logo-text">{{ site_name }}<span class="logo-cn">{{ site_name_cn }}</span></span>
+    </a>
+    <nav class="main-nav" id="mainNav">
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-list" id="navList">
+        <li><a href="/">首页</a></li>
+        <li class="nav-dropdown">
+          <a href="#">分类 <span class="dropdown-arrow">▼</span></a>
+          <ul class="dropdown-menu">
+            {% for cid, cat in categories.items() %}
+            <li><a href="/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn }}</a></li>
+            {% endfor %}
+          </ul>
+        </li>
+        <li><a href="/about/">关于</a></li>
+        <li><a href="/rss.xml">RSS</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<!-- Breadcrumbs -->
+{% if breadcrumbs %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <div class="container">
+    <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+      {% set crumb_data = breadcrumbs|replace('{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":', '')|replace(']}', ']') %}
+      {% set crumb_data = breadcrumbs %}
+      {% for crumb in [
+        {"name": "首页", "item": "/"},
+      ] %}
+      {% endfor %}
+    </ol>
+  </div>
+</nav>
+{% endif %}
+
+<!-- Main Content -->
+<main class="main-content">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-section">
+      <h3>{{ site_name }}</h3>
+      <p>{{ site_desc_cn }}</p>
+      <p>{{ site_desc }}</p>
+    </div>
+    <div class="footer-section">
+      <h4>快速链接</h4>
+      <ul>
+        <li><a href="/">首页</a></li>
+        <li><a href="/about/">关于我们</a></li>
+        <li><a href="/rss.xml">RSS订阅</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>热门分类</h4>
+      <ul>
+        {% for cid, cat in categories.items() %}{% if loop.index <= 5 %}
+        <li><a href="/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn }}</a></li>
+        {% endif %}{% endfor %}
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>热门标签</h4>
+      <div class="tag-cloud">
+        {% for tag in tags[:15] %}
+        <a href="/tag/{{ slugify(tag) }}/" class="tag">{{ tag }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="container">
+      <p>&copy; {{ current_year }} {{ site_name }}. All rights reserved. | <a href="/privacy/">Privacy Policy</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- Search Bar -->
+<div class="search-overlay" id="searchOverlay">
+  <div class="search-modal">
+    <button class="search-close" id="searchClose" aria-label="Close search">&times;</button>
+    <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="/static/js/main.js" defer></script>
+<script src="/static/js/search.js" defer></script>
+
+<!-- Google Analytics / AdSense Auto Ads -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID_HERE"
+     crossorigin="anonymous"></script>
+
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

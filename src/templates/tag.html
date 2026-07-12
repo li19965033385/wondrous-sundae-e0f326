@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+  <div class="container">
+    <div class="page-header-content">
+      <h1>🏷️ {{ tag }}</h1>
+      <p class="page-desc">所有标记为"{{ tag }}"的文章</p>
+      <span class="page-count">{{ total }} 篇文章</span>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="archive-list">
+      {% for article in articles %}
+      <article class="archive-item">
+        <div class="archive-meta">
+          <a href="/category/{{ article.category }}/" class="archive-cat">{{ categories[article.category].icon }} {{ categories[article.category].name_cn }}</a>
+          <span class="archive-date">{{ article.date }}</span>
+        </div>
+        <h2 class="archive-title"><a href="/article/{{ article.slug }}/">{{ article.title_cn|default(article.title) }}</a></h2>
+        <p class="archive-desc">{{ article.description_cn|default(article.description) }}</p>
+        <div class="archive-tags">
+          {% for t in article.tags[:5] %}
+          <a href="/tag/{{ slugify(t) }}/" class="tag">#{{ t }}</a>
+          {% endfor %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
