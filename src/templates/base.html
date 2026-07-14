@@ -1,144 +1,232 @@
 <!DOCTYPE html>
-<html lang="zh-CN" prefix="og: https://ogp.me/ns#">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }}</title>
+  <meta name="description" content="{{ page_description }}">
+    <!-- Search Engine Verification -->
+  <meta name="google-site-verification" content="YOUR_GOOGLE_SEARCH_CONSOLE_CODE">
+  <meta name="baidu-site-verification" content="YOUR_BAIDU_ZM_CODE">
+  <meta name="msvalidate.01" content="YOUR_BING_WEBMASTER_CODE">
+  <meta name="yandex-verification" content="YOUR_YANDEX_CODE">
+  
+  <!-- Performance Optimizations -->
+  <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+  <link rel="preconnect" href="https://googleads.g.doubleclick.net">
+  <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
+  
+  <!-- SEO Meta -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta name="revisit-after" content="1 day">
+  <meta name="author" content="AI Tools Hub">
+  <meta name="keywords" content="AI tools, artificial intelligence, ChatGPT, AI tutorial, AI tools hub">
+    <!-- Multi-Country Hreflang -->
+  <link rel="alternate" hreflang="en-US" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="en-GB" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="en" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="zh-CN" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="zh-TW" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="zh-Hans" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="ja-JP" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="ja" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="ko-KR" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="ko" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="es-ES" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="es-MX" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="es" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="x-default" href="{{ site_url }}{{ page_url }}">
+  <link rel="canonical" href="{{ site_url }}{{ page_url }}">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ page_title }}">
+  <meta property="og:description" content="{{ page_description }}">
+  <meta property="og:url" content="{{ site_url }}{{ page_url }}">
+  <meta property="og:type" content="{{ og_type }}">
+  <meta property="og:site_name" content="{{ site_name }}">
+  <meta property="og:image" content="{{ site_url }}/img/og-default.svg">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page_title }}">
+  <meta name="twitter:description" content="{{ page_description }}">
+  
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "{{ site_name }}",
+    "url": "{{ site_url }}",
+    "description": "{{ site_desc }}"
+  }
+  </script>
+  
+  {% if breadcrumbs %}
+  <script type="application/ld+json">{{ breadcrumbs | safe }}</script>
+  {% endif %}
+  
+    <!-- Organization Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "AI Tools Hub",
+    "url": "{{ site_url }}",
+    "logo": "{{ site_url }}/img/og-default.svg",
+    "description": "{{ site_desc }}",
+    "foundingDate": "2025",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "US"
+    },
+    "sameAs": [
+      "https://twitter.com/aitoolshub"
+    ]
+  }
+  </script>
+  {% if faq_ld %}
+  <script type="application/ld+json">{{ faq_ld | safe }}</script>
+  {% endif %}
+  
+  {% if ld_json %}
+  <script type="application/ld+json">{{ ld_json | safe }}</script>
+  {% endif %}
 
-<title>{{ page_title }}</title>
-<meta name="description" content="{{ page_description }}">
-<link rel="canonical" href="{{ site_url }}{{ page_url }}">
+  <!-- AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7089877911189758" crossorigin="anonymous"></script>
+  <!-- Auto Ads Config -->
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7089877911189758",
+      enable_page_level_ads: true
+    });
+  </script>
 
-<!-- Open Graph -->
-<meta property="og:type" content="{{ og_type|default('website') }}">
-<meta property="og:title" content="{{ page_title }}">
-<meta property="og:description" content="{{ page_description }}">
-<meta property="og:url" content="{{ site_url }}{{ page_url }}">
-<meta property="og:site_name" content="{{ site_name }}">
-<meta property="og:image" content="{{ site_url }}{{ og_image|default('/img/og-default.jpg') }}">
-<meta property="og:locale" content="zh_CN">
-
-<!-- Twitter Card -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{{ page_title }}">
-<meta name="twitter:description" content="{{ page_description }}">
-<meta name="twitter:image" content="{{ site_url }}{{ og_image|default('/img/og-default.jpg') }}">
-
-<!-- Schema.org JSON-LD -->
-<script type="application/ld+json">
-{{ website_ld|default('') }}
-</script>
-{% if breadcrumbs %}
-<script type="application/ld+json">
-{{ breadcrumbs }}
-</script>
-{% endif %}
-{% if faq_ld %}
-<script type="application/ld+json">
-{{ faq_ld }}
-</script>
-{% endif %}
-{% if ld_json %}
-<script type="application/ld+json">
-{{ ld_json }}
-</script>
-{% endif %}
-
-<!-- Styles -->
-<link rel="stylesheet" href="/static/css/style.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-<!-- Google AdSense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID_HERE"
-     crossorigin="anonymous"></script>
-
-<!-- RSS -->
-<link rel="alternate" type="application/rss+xml" title="{{ site_name }} - RSS Feed" href="{{ site_url }}/rss.xml">
-
-<!-- Favicon -->
-<link rel="icon" href="/static/img/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/static/img/apple-touch-icon.png">
-
-{% block extra_head %}{% endblock %}
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ site_url }}/static/css/style.css">
+  <link rel="alternate" type="application/rss+xml" title="{{ site_name }} - RSS" href="{{ site_url }}/rss.xml">
+  
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
-<!-- Navigation -->
+
+<!-- ═══ Sticky Header ═══ -->
 <header class="site-header">
   <div class="container header-inner">
     <a href="/" class="site-logo">
       <span class="logo-icon">🤖</span>
-      <span class="logo-text">{{ site_name }}<span class="logo-cn">{{ site_name_cn }}</span></span>
+      <span class="logo-text">{{ site_name }} <span class="logo-cn">{{ site_name_cn }}</span></span>
     </a>
-    <nav class="main-nav" id="mainNav">
-      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-        <span></span><span></span><span></span>
-      </button>
+    <nav class="site-nav">
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
       <ul class="nav-list" id="navList">
-        <li><a href="/">首页</a></li>
+        <li><a href="/" data-i18n="nav.home">首页</a></li>
         <li class="nav-dropdown">
-          <a href="#">分类 <span class="dropdown-arrow">▼</span></a>
-          <ul class="dropdown-menu">
+          <a href="javascript:void(0)">分类 ▾</a>
+          <div class="dropdown-menu">
             {% for cid, cat in categories.items() %}
-            <li><a href="/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn }}</a></li>
+            <a href="/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn }}</a>
             {% endfor %}
-          </ul>
+          </div>
         </li>
-        <li><a href="/about/">关于</a></li>
-        <li><a href="/rss.xml">RSS</a></li>
+        <li><a href="/tools/" data-i18n="nav.tools">⚡ AI工具</a></li>
+        <li><a href="/videos/" data-i18n="nav.videos">🎬 视频</a></li>
+        <li class="nav-dropdown">
+          <a href="javascript:void(0)"><span data-i18n="nav.language">Language</span> ▾</a>
+          <div class="dropdown-menu" id="langSwitcher">
+            <a href="#" onclick="I18N.applyLang('en');return false">🇺🇸 English</a>
+            <a href="#" onclick="I18N.applyLang('zh-CN');return false">🇨🇳 简体中文</a>
+            <a href="#" onclick="I18N.applyLang('ja');return false">🇯🇵 日本語</a>
+            <a href="#" onclick="I18N.applyLang('ko');return false">🇰🇷 한국어</a>
+            <a href="#" onclick="I18N.applyLang('es');return false">🇪🇸 Español</a>
+          </div>
+        </li>
+        <li><a href="/about/" data-i18n="nav.about">关于</a></li>
+        <li><a href="/rss.xml" data-i18n="nav.rss">📡 RSS</a></li>
+        <li><button class="search-btn" onclick="openSearch()" aria-label="Search" data-i18n="nav.search">🔍</button></li>
       </ul>
     </nav>
   </div>
 </header>
 
-<!-- Breadcrumbs -->
+<!-- ═══ Breadcrumbs ═══ -->
 {% if breadcrumbs %}
-<nav class="breadcrumbs" aria-label="Breadcrumb">
+<nav class="breadcrumbs">
   <div class="container">
     <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="/" itemprop="item"><span itemprop="name">首页</span></a>
+        <meta itemprop="position" content="1">
+      </li>
       {% set crumb_data = breadcrumbs|replace('{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":', '')|replace(']}', ']') %}
-      {% set crumb_data = breadcrumbs %}
-      {% for crumb in [
-        {"name": "首页", "item": "/"},
-      ] %}
+      {% set crumb_list = crumb_data[1:-1].split('},{') %}
+      {% for crumb in crumb_list[:3] %}
+      {% set name_match = crumb.split('"name":"') %}
+      {% set item_match = crumb.split('"item":"') %}
+      {% if name_match|length > 1 and item_match|length > 1 %}
+      {% set crumb_name = name_match[1].split('"')[0] %}
+      {% set crumb_item = item_match[1].split('"')[0] %}
+      {% if not loop.last %}
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a href="{{ crumb_item }}" itemprop="item"><span itemprop="name">{{ crumb_name }}</span></a>
+        <meta itemprop="position" content="{{ loop.index + 1 }}">
+      </li>
+      {% else %}
+      <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <span itemprop="name">{{ crumb_name }}</span>
+        <meta itemprop="position" content="{{ loop.index + 1 }}">
+      </li>
+      {% endif %}
+      {% endif %}
       {% endfor %}
     </ol>
   </div>
 </nav>
 {% endif %}
 
-<!-- Main Content -->
-<main class="main-content">
+<!-- ═══ Main Content ═══ -->
+<main>
   {% block content %}{% endblock %}
 </main>
 
-<!-- Footer -->
+<!-- ═══ Footer ═══ -->
 <footer class="site-footer">
   <div class="container footer-grid">
     <div class="footer-section">
-      <h3>{{ site_name }}</h3>
-      <p>{{ site_desc_cn }}</p>
+      <h3 data-i18n="hero.title1">🤖 {{ site_name }}</h3>
+      <p data-i18n="features.desc">{{ site_desc_cn }}</p>
       <p>{{ site_desc }}</p>
     </div>
     <div class="footer-section">
-      <h4>快速链接</h4>
+      <h4 data-i18n="footer.quick_links">快速链接</h4>
       <ul>
-        <li><a href="/">首页</a></li>
-        <li><a href="/about/">关于我们</a></li>
-        <li><a href="/rss.xml">RSS订阅</a></li>
+        <li><a href="/" data-i18n="nav.home">首页</a></li>
+        <li><a href="/tools/" data-i18n="nav.tools">⚡ AI工具</a></li>
+        <li><a href="/videos/" data-i18n="nav.videos">🎬 视频</a></li>
+        <li><a href="/videos/" data-i18n="nav.videos">🎬 视频</a></li>
+        <li><a href="/about/" data-i18n="footer.about">关于我们</a></li>
+        <li><a href="/rss.xml" data-i18n="footer.rss">📡 RSS订阅</a></li>
       </ul>
     </div>
     <div class="footer-section">
-      <h4>热门分类</h4>
+      <h4 data-i18n="footer.popular_cats">热门分类</h4>
       <ul>
         {% for cid, cat in categories.items() %}{% if loop.index <= 5 %}
         <li><a href="/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn }}</a></li>
         {% endif %}{% endfor %}
       </ul>
     </div>
+        <div class="footer-section">
+      <h4>📬 订阅更新</h4>
+      <p style="font-size:0.82em;margin-bottom:12px">获取最新AI工具评测和教程</p>
+      <form onsubmit="alert('🎉 感谢订阅！我们会持续为您推送AI最新资讯。');this.querySelector('input').value='';return false" style="display:flex;gap:4px">
+        <input type="email" placeholder="输入邮箱..." required style="flex:1;padding:8px 12px;border:1px solid rgba(255,255,255,0.2);border-radius:50px;background:rgba(255,255,255,0.08);color:#fff;font-size:0.82em;outline:none">
+        <button type="submit" style="padding:8px 16px;border-radius:50px;background:var(--primary);color:#fff;border:none;cursor:pointer;font-size:0.82em">订阅</button>
+      </form>
+    </div>
     <div class="footer-section">
-      <h4>热门标签</h4>
+      <h4 data-i18n="footer.popular_tags">热门标签</h4>
       <div class="tag-cloud">
         {% for tag in tags[:15] %}
         <a href="/tag/{{ slugify(tag) }}/" class="tag">{{ tag }}</a>
@@ -148,28 +236,30 @@
   </div>
   <div class="footer-bottom">
     <div class="container">
-      <p>&copy; {{ current_year }} {{ site_name }}. All rights reserved. | <a href="/privacy/">Privacy Policy</a></p>
+      <p>© {{ current_year }} {{ site_name }}. All rights reserved. | <a href="/privacy/">Privacy Policy</a></p>
     </div>
   </div>
 </footer>
 
-<!-- Search Bar -->
+<!-- ═══ Search Overlay ═══ -->
 <div class="search-overlay" id="searchOverlay">
   <div class="search-modal">
     <button class="search-close" id="searchClose" aria-label="Close search">&times;</button>
-    <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." autocomplete="off">
+    <input type="text" class="search-input" id="searchInput" data-i18n="search.placeholder" placeholder="Search articles..." autocomplete="off">
     <div class="search-results" id="searchResults"></div>
   </div>
 </div>
 
-<!-- Scripts -->
-<script src="/static/js/main.js" defer></script>
-<script src="/static/js/search.js" defer></script>
-
-<!-- Google Analytics / AdSense Auto Ads -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID_HERE"
-     crossorigin="anonymous"></script>
-
+<!-- ═══ Scripts ═══ -->
+<script src="/static/js/i18n.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/search.js"></script>
+<script>
+/* Mobile nav toggle */
+document.getElementById('navToggle')?.addEventListener('click', function() {
+  document.getElementById('navList').classList.toggle('active');
+});
+</script>
 {% block extra_scripts %}{% endblock %}
 </body>
 </html>

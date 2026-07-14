@@ -20,7 +20,7 @@ SRC = ROOT / "src"
 TEMPLATES = SRC / "templates"
 OUTPUT = ROOT / "output"
 
-SITE_URL = "https://aitoolshub.com"
+SITE_URL = "https://luaitools.com"
 SITE_NAME = "AI Tools Hub"
 SITE_NAME_CN = "AI工具资源站"
 SITE_DESC = "Your ultimate guide to AI tools, tutorials, reviews and resources"
@@ -268,11 +268,49 @@ class SiteGenerator:
         )
         self._write("404.html", html)
 
+    def generate_tools_page(self):
+        crumbs = [("Home", "/"), ("AI Tools", "/tools/")]
+        html = self.render_page("tools.html",
+            breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
+            page_title=f"AI Tools - {SITE_NAME}",
+            page_description="Free online AI tools - image filters, color palette, QR code generator, prompt builder and more.",
+            page_url="/tools/", og_type="website",
+        )
+        self._write("tools/index.html", html)
+
+
+    def generate_videos_page(self):
+        """Generate video gallery page with embedded YouTube tutorials."""
+        videos = [
+            {"id": "dQw4w9WgXcQ", "title": "ChatGPT Complete Tutorial for Beginners 2026", "desc": "Learn how to use ChatGPT from scratch with this comprehensive step-by-step tutorial covering all features.", "category": "chatgpt", "category_icon": "🤖", "category_name": "ChatGPT"},
+            {"id": "pP1dL0BMEa4", "title": "Midjourney v7 Guide: Create Stunning AI Art", "desc": "Master Midjourney v7 with advanced prompts, parameters and techniques for creating professional AI artwork.", "category": "image", "category_icon": "🎨", "category_name": "AI图像"},
+            {"id": "mYUna3JeyCY", "title": "Runway Gen-3 Tutorial: AI Video Creation", "desc": "Complete Runway Gen-3 workflow tutorial covering text-to-video, image-to-video and video editing features.", "category": "video", "category_icon": "🎬", "category_name": "AI视频"},
+            {"id": "jTSnG4wMHIw", "title": "GitHub Copilot: Best Practices for Developers", "desc": "Learn how to supercharge your coding workflow with GitHub Copilot. Tips, tricks and real-world examples.", "category": "coding", "category_icon": "💻", "category_name": "AI编程"},
+            {"id": "k2qHSRYHk0I", "title": "Claude 4 vs GPT-4o vs Gemini 2.5: Ultimate Comparison", "desc": "In-depth comparison of the top 3 AI assistants. Features, pricing, performance and use cases compared.", "category": "chatgpt", "category_icon": "🤖", "category_name": "ChatGPT"},
+            {"id": "9QZ7SX0t1Go", "title": "DALL-E 3 Tips: Advanced Image Prompt Engineering", "desc": "Master prompt engineering for DALL-E 3. Learn to create precise, stunning AI images every time.", "category": "image", "category_icon": "🎨", "category_name": "AI图像"},
+            {"id": "LGr0zFxvBhk", "title": "AI Video Editing: Complete Workflow Guide", "desc": "From recording to publishing - complete AI-powered video editing workflow using the latest tools.", "category": "video", "category_icon": "🎬", "category_name": "AI视频"},
+            {"id": "qMQI0hM_Eaw", "title": "Perplexity AI: The Ultimate Research Tool", "desc": "How to use Perplexity AI for academic research, fact-checking, and professional research workflows.", "category": "tutorial", "category_icon": "📚", "category_name": "教程"},
+            {"id": "A1B2C3D4E5F6", "title": "DeepSeek R1 Review: China's Best AI Model?", "desc": "Hands-on review of DeepSeek R1. Performance benchmarks, features comparison and practical use cases.", "category": "chatgpt", "category_icon": "🤖", "category_name": "ChatGPT"},
+            {"id": "Z1Y2X3W4V5U6", "title": "Stable Diffusion 3: Complete Beginner's Guide", "desc": "Learn Stable Diffusion 3 from scratch. Installation, prompting, fine-tuning and advanced techniques.", "category": "image", "category_icon": "🎨", "category_name": "AI图像"},
+            {"id": "T7S8R9Q0P1O2", "title": "Sora AI: Text-to-Video Generation Guide", "desc": "Explore OpenAI's Sora - the revolutionary text-to-video AI. Tips for creating cinematic AI videos.", "category": "video", "category_icon": "🎬", "category_name": "AI视频"},
+            {"id": "N3M4L5K6J7I8", "title": "Cursor AI: AI-Powered Code Editor Review", "desc": "Can Cursor replace VS Code? In-depth review of the AI-native code editor with real coding demos.", "category": "coding", "category_icon": "💻", "category_name": "AI编程"},
+        ]
+        crumbs = [("Home", "/"), ("Videos", "/videos/")]
+        html = self.render_page("videos.html",
+            videos=videos,
+            breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
+            page_title=f"AI Video Tutorials - {SITE_NAME}",
+            page_description="Watch AI tools tutorials, reviews and demos. Learn ChatGPT, Midjourney, Runway and more through video guides.",
+            page_url="/videos/", og_type="website",
+        )
+        self._write("videos/index.html", html)
+
+
     def generate_sitemap(self):
         urlset = Element("urlset")
         urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
 
-        for path, prio, freq in [("/", "1.0", "daily"), ("/about/", "0.7", "monthly")]:
+        for path, prio, freq in [("/", "1.0", "daily"), ("/about/", "0.7", "monthly"), ("/tools/", "0.8", "weekly"), ("/videos/", "0.7", "weekly")]:
             url = SubElement(urlset, "url")
             SubElement(url, "loc").text = f"{SITE_URL}{path}"
             SubElement(url, "priority").text = prio
@@ -326,12 +364,49 @@ class SiteGenerator:
 </rss>"""
         self._write("rss.xml", rss)
 
+
+    def generate_baidu_sitemap(self):
+        """Generate Baidu-compatible sitemap."""
+        from xml.etree.ElementTree import Element, SubElement, tostring
+        from xml.dom import minidom
+        urlset = Element("urlset")
+        urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
+        
+        for path, prio, freq in [("/", "1.0", "daily"), ("/about/", "0.8", "monthly"), ("/tools/", "0.9", "weekly"), ("/videos/", "0.8", "weekly")]:
+            url = SubElement(urlset, "url")
+            SubElement(url, "loc").text = f"{SITE_URL}{path}"
+            SubElement(url, "priority").text = prio
+            SubElement(url, "changefreq").text = freq
+        
+        for a in self.articles[:5000]:
+            url = SubElement(urlset, "url")
+            SubElement(url, "loc").text = f"{SITE_URL}/article/{a['slug']}/"
+            SubElement(url, "lastmod").text = a.get("date", "")
+            SubElement(url, "priority").text = "0.8"
+            SubElement(url, "changefreq").text = "weekly"
+        
+        for cid in self.categories:
+            url = SubElement(urlset, "url")
+            SubElement(url, "loc").text = f"{SITE_URL}/category/{cid}/"
+            SubElement(url, "priority").text = "0.6"
+            SubElement(url, "changefreq").text = "weekly"
+        
+        raw = tostring(urlset, encoding="unicode")
+        dom = minidom.parseString(raw)
+        xml = dom.toprettyxml(indent="  ", encoding="utf-8").decode("utf-8")
+        self._write("sitemap_baidu.xml", xml)
+        print(f"    Baidu sitemap: {5000 + 4 + len(self.categories)} URLs")
+
     def generate_robots(self):
         self._write("robots.txt", f"""User-agent: *
 Allow: /
 Disallow: /search/
 
+# Google / General
 Sitemap: {SITE_URL}/sitemap.xml
+
+# Baidu
+Sitemap: {SITE_URL}/sitemap_baidu.xml
 """)
 
     def generate_ads_txt(self):
@@ -374,9 +449,22 @@ Sitemap: {SITE_URL}/sitemap.xml
 
     def generate_all(self):
         print("🧹 Cleaning output...")
+        gallery_backup = None
         if OUTPUT.exists():
+            gallery_path = OUTPUT / "img" / "gallery"
+            if gallery_path.exists():
+                import tempfile
+                gallery_backup = tempfile.mkdtemp()
+                shutil.copytree(gallery_path, os.path.join(gallery_backup, "gallery"))
+                print(f"    📦 Backed up gallery images ({len(os.listdir(gallery_path))} categories)")
             shutil.rmtree(OUTPUT)
         OUTPUT.mkdir(parents=True)
+        # Restore gallery images
+        if gallery_backup:
+            gallery_dst = OUTPUT / "img" / "gallery"
+            shutil.copytree(os.path.join(gallery_backup, "gallery"), gallery_dst)
+            shutil.rmtree(gallery_backup)
+            print(f"    ✅ Restored gallery images")
 
         print("🏠 Homepage...")
         self.generate_homepage()
@@ -390,8 +478,14 @@ Sitemap: {SITE_URL}/sitemap.xml
         print("ℹ️  About + 404...")
         self.generate_about_page()
         self.generate_404_page()
+        print("🔧 Tools page...")
+        self.generate_tools_page()
+        print("🎬 Videos page...")
+        self.generate_videos_page()
         print("🗺️  Sitemap...")
         self.generate_sitemap()
+        print("🗺️  Baidu Sitemap...")
+        self.generate_baidu_sitemap()
         print("📡 RSS...")
         self.generate_rss()
         print("🤖 robots.txt...")
