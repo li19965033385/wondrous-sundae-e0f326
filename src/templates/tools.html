@@ -1,0 +1,794 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<meta name="keywords" content="AI tools, online image editor, QR code generator, color palette, AI tools online, free AI tools">
+<style>
+.tool-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+.tool-header { text-align: center; margin-bottom: 48px; }
+.tool-header h1 { font-size: 2.2em; font-weight: 700; margin-bottom: 12px; }
+.tool-header p { color: var(--text-secondary); font-size: 1.05em; }
+
+.tool-tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+.tool-tab {
+  padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border);
+  background: var(--bg-card); cursor: pointer; font-size: 0.9em; font-weight: 500;
+  transition: all 0.3s; color: var(--text-secondary);
+}
+.tool-tab:hover { border-color: var(--primary-light); color: var(--primary); }
+.tool-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.tool-panel { display: none; }
+.tool-panel.active { display: block; }
+
+.tool-box {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 32px; max-width: 700px; margin: 0 auto;
+}
+.tool-box h2 { font-size: 1.3em; margin-bottom: 8px; }
+.tool-box .tool-desc { color: var(--text-secondary); font-size: 0.92em; margin-bottom: 24px; }
+
+.upload-zone {
+  border: 2px dashed var(--border); border-radius: 12px; padding: 40px 20px;
+  text-align: center; cursor: pointer; transition: all 0.3s;
+}
+.upload-zone:hover { border-color: var(--primary); background: var(--bg-alt); }
+.upload-zone.dragover { border-color: var(--primary); background: rgba(99,102,241,0.05); }
+.upload-zone.has-image { border-style: solid; border-color: var(--primary-light); padding: 16px; }
+
+.upload-zone .upload-icon { font-size: 3em; display: block; margin-bottom: 12px; }
+.upload-zone .upload-text { font-weight: 500; color: var(--text); }
+.upload-zone .upload-hint { font-size: 0.82em; color: var(--text-muted); margin-top: 4px; }
+.upload-zone img.preview { max-width: 100%; max-height: 300px; border-radius: 8px; }
+
+.tool-actions { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+.tool-actions button, .tool-actions a {
+  padding: 10px 24px; border-radius: 50px; border: none; cursor: pointer;
+  font-size: 0.9em; font-weight: 500; transition: all 0.3s;
+}
+.btn-primary-tool { background: var(--primary); color: #fff; }
+.btn-primary-tool:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-secondary-tool { background: var(--bg-alt); color: var(--text); border: 1px solid var(--border) !important; }
+.btn-secondary-tool:hover { border-color: var(--primary-light); }
+
+.tool-result { margin-top: 20px; display: none; }
+.tool-result.show { display: block; }
+.tool-result img.result-img { max-width: 100%; max-height: 400px; border-radius: 8px; }
+
+.filter-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+.filter-control { display: flex; flex-direction: column; gap: 4px; }
+.filter-control label { font-size: 0.82em; color: var(--text-secondary); }
+.filter-control input[type="range"] { width: 100%; }
+
+.qr-input { width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 1em; margin-bottom: 12px; background: var(--bg); color: var(--text); outline: none; }
+.qr-input:focus { border-color: var(--primary); }
+
+.palette-grid { display: flex; gap: 4px; margin: 16px 0; flex-wrap: wrap; }
+.palette-color { width: 60px; height: 60px; border-radius: 8px; display: flex; align-items: flex-end;
+  justify-content: center; padding-bottom: 4px; font-size: 0.7em; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+.prompt-form { display: flex; flex-direction: column; gap: 12px; }
+.prompt-form select, .prompt-form textarea {
+  width: 100%; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 0.95em; background: var(--bg); color: var(--text); outline: none;
+}
+.prompt-form select:focus, .prompt-form textarea:focus { border-color: var(--primary); }
+.prompt-form textarea { min-height: 80px; resize: vertical; }
+.prompt-result { background: var(--bg-alt); padding: 16px; border-radius: 8px; margin-top: 12px; font-size: 0.9em; white-space: pre-wrap; display: none; }
+.prompt-result.show { display: block; }
+
+.cv-container { position: relative; display: inline-block; }
+#bgCanvas { max-width: 100%; border-radius: 8px; }
+
+@media (max-width: 600px) {
+  .filter-controls { grid-template-columns: 1fr; }
+  .tool-box { padding: 20px; }
+}
+</style>
+<script src="/static/js/tools-enhanced.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="tool-container">
+  <div class="tool-header">
+    <h1 data-i18n="tools.page.title">⚡ 在线AI工具箱</h1>
+    <p data-i18n="tools.page.desc">免费使用在线AI工具 — 图片处理、颜色提取、QR码生成等</p>
+  </div>
+
+    <!-- Ad Banner -->
+  <div style="max-width:700px;margin:0 auto 24px">
+    <ins class="adsbygoogle"
+         style="display:block;min-height:90px"
+         data-ad-client="ca-pub-7089877911189758"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  <div class="tool-tabs" id="toolTabs">
+    <button class="tool-tab active" data-tab="image-filter" data-i18n="tools.image_filter">🎨 图片滤镜</button>
+    <button class="tool-tab" data-tab="palette" data-i18n="tools.palette">🌈 颜色提取</button>
+    <button class="tool-tab" data-tab="qr" data-i18n="tools.qr">📱 QR码生成</button>
+    <button class="tool-tab" data-tab="prompt" data-i18n="tools.prompt">💬 Prompt构建</button>
+    <button class="tool-tab" data-tab="bg-remove" data-i18n="tools.bg_remove">✂️ 背景去除</button>
+    <button class="tool-tab" data-tab="tts" data-i18n="tools.tts">🔊 文字转语音</button>
+    <button class="tool-tab" data-tab="image-gen" data-i18n="tools.img_gen">🎨 图片生成</button>
+    <button class="tool-tab" data-tab="video-studio" data-i18n="tools.video">🎬 视频工坊</button>
+    <button class="tool-tab" data-tab="ppt" data-i18n="tools.ppt">📊 AI幻灯片</button>
+    <button class="tool-tab" data-tab="office" data-i18n="tools.office">📝 办公套件</button>
+    <button class="tool-tab" data-tab="design" data-i18n="tools.design">🎯 设计工坊</button>
+    <button class="tool-tab" data-tab="automation" data-i18n="tools.automation">⚙️ 自动化</button>
+    <button class="tool-tab" data-tab="health">🏥 AI健康</button>
+  </div>
+
+  <!-- ═══ Image Filter ═══ -->
+  <div class="tool-panel active" id="panel-image-filter">
+    <div class="tool-box">
+      <h2>🎨 AI图片滤镜</h2>
+      <p class="tool-desc" data-i18n="tools.image_filter.desc">上传图片并应用各种滤镜效果</p>
+      <div class="upload-zone" id="filterUpload">
+        <span class="upload-icon">🖼️</span>
+        <div class="upload-text">点击或拖拽上传图片</div>
+        <div class="upload-hint">支持 JPG, PNG, WebP</div>
+        <input type="file" accept="image/*" style="display:none" id="filterFileInput">
+      </div>
+      <div class="filter-controls" id="filterControls" style="display:none">
+        <div class="filter-control">
+          <label>亮度 <span id="val-brightness">100</span>%</label>
+          <input type="range" min="0" max="200" value="100" data-filter="brightness">
+        </div>
+        <div class="filter-control">
+          <label>对比度 <span id="val-contrast">100</span>%</label>
+          <input type="range" min="0" max="200" value="100" data-filter="contrast">
+        </div>
+        <div class="filter-control">
+          <label>饱和度 <span id="val-saturate">100</span>%</label>
+          <input type="range" min="0" max="300" value="100" data-filter="saturate">
+        </div>
+        <div class="filter-control">
+          <label>色相旋转 <span id="val-hue-rotate">0</span>°</label>
+          <input type="range" min="0" max="360" value="0" data-filter="hue-rotate">
+        </div>
+        <div class="filter-control">
+          <label>模糊 <span id="val-blur">0</span>px</label>
+          <input type="range" min="0" max="10" value="0" data-filter="blur" step="0.5">
+        </div>
+        <div class="filter-control">
+          <label>灰度 <span id="val-grayscale">0</span>%</label>
+          <input type="range" min="0" max="100" value="0" data-filter="grayscale">
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:12px">
+        <canvas id="filterCanvas" style="max-width:100%;max-height:350px;display:none;border-radius:8px"></canvas>
+      </div>
+      <div class="tool-actions" id="filterActions" style="display:none">
+        <button class="btn-primary-tool" id="filterDownload">💾 下载</button>
+        <button class="btn-secondary-tool" id="filterReset">🔄 重置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Color Palette ═══ -->
+  <div class="tool-panel" id="panel-palette">
+    <div class="tool-box">
+      <h2>🌈 颜色提取器</h2>
+      <p class="tool-desc">上传图片，自动提取主要配色方案</p>
+      <div class="upload-zone" id="paletteUpload">
+        <span class="upload-icon">🎨</span>
+        <div class="upload-text">点击上传图片提取配色</div>
+        <div class="upload-hint">支持 JPG, PNG, WebP</div>
+        <input type="file" accept="image/*" style="display:none" id="paletteFileInput">
+      </div>
+      <canvas id="paletteCanvas" style="display:none"></canvas>
+      <div class="palette-grid" id="paletteGrid"></div>
+      <div class="tool-result" id="paletteResult">
+        <button class="btn-primary-tool" id="paletteCopy">📋 复制配色代码</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ QR Code ═══ -->
+  <div class="tool-panel" id="panel-qr">
+    <div class="tool-box">
+      <h2>📱 QR码生成器</h2>
+      <p class="tool-desc">输入文字或链接，生成二维码</p>
+      <input type="text" class="qr-input" id="qrInput" placeholder="输入文字或URL..." value="https://luaitools.com">
+      <div style="text-align:center;margin-bottom:16px">
+        <canvas id="qrCanvas" style="border-radius:8px;border:8px solid #fff;box-shadow:0 2px 12px rgba(0,0,0,0.1)"></canvas>
+      </div>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="qrGenerate">🔄 生成QR码</button>
+        <button class="btn-secondary-tool" id="qrDownload">💾 下载PNG</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Prompt Builder ═══ -->
+  <div class="tool-panel" id="panel-prompt">
+    <div class="tool-box">
+      <h2>💬 AI Prompt构建器</h2>
+      <p class="tool-desc">快速构建高质量的AI提示词</p>
+      <div class="prompt-form">
+        <select id="promptRole">
+          <option value="你是一个专业的AI助手，请">通用助手</option>
+          <option value="你是一个资深的程序员，请">程序员</option>
+          <option value="你是一个创意设计师，请">设计师</option>
+          <option value="你是一个市场营销专家，请">营销专家</option>
+          <option value="你是一个学术研究员，请">学术研究员</option>
+          <option value="你是一个教育导师，请">教育导师</option>
+        </select>
+        <select id="promptAction">
+          <option value="详细解释">详细解释</option>
+          <option value="分析并总结">分析并总结</option>
+          <option value="提供步骤指南">提供步骤指南</option>
+          <option value="列出优缺点">列出优缺点</option>
+          <option value="对比分析">对比分析</option>
+          <option value="给予专业建议">给予专业建议</option>
+        </select>
+        <textarea id="promptTopic" placeholder="输入你的主题或问题..."></textarea>
+        <select id="promptFormat">
+          <option value="请用专业且易懂的语言回答">专业风格</option>
+          <option value="请用简洁的语言列出重点">简洁风格</option>
+          <option value="请以Markdown格式输出，包含标题和列表">Markdown格式</option>
+          <option value="请用中文详细回答">中文回答</option>
+        </select>
+        <button class="btn-primary-tool" id="promptGenerate" style="align-self:flex-start">✨ 生成Prompt</button>
+      </div>
+      <div class="prompt-result" id="promptResult"></div>
+    </div>
+  </div>
+
+  <!-- ═══ Background Remove ═══ -->
+  <div class="tool-panel" id="panel-bg-remove">
+    <div class="tool-box">
+      <h2>✂️ 图片背景去除（色度键）</h2>
+      <p class="tool-desc">上传图片，使用色度键去除背景色</p>
+      <div class="upload-zone" id="bgUpload">
+        <span class="upload-icon">✂️</span>
+        <div class="upload-text">点击上传图片</div>
+        <div class="upload-hint">支持 JPG, PNG, WebP</div>
+        <input type="file" accept="image/*" style="display:none" id="bgFileInput">
+      </div>
+      <div style="display:flex;gap:12px;margin-top:12px">
+        <canvas id="bgCanvas" style="max-width:300px;border-radius:8px;display:none"></canvas>
+        <canvas id="bgResultCanvas" style="max-width:300px;border-radius:8px;display:none"></canvas>
+      </div>
+      <div class="tool-actions" id="bgActions" style="display:none">
+        <button class="btn-primary-tool" id="bgRemove">✂️ 去除背景</button>
+        <button class="btn-secondary-tool" id="bgDownload">💾 下载</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Text to Speech ═══ -->
+
+  <!-- ═══ AI Image Generator ═══ -->
+  <div class="tool-panel" id="panel-image-gen">
+    <div class="tool-box">
+      <h2>🎨 AI图片生成器</h2>
+      <p class="tool-desc">AI智能生成抽象艺术图案，选择风格和配色</p>
+      <canvas id="imgGenCanvas" style="width:100%;max-width:500px;height:350px;border-radius:8px;margin:0 auto;display:block"></canvas>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <input type="text" id="imgGenPrompt" class="qr-input" style="flex:2;min-width:150px;margin-bottom:0" placeholder="输入创意提示词..." value="AI Abstract Art">
+        <select id="imgGenStyle" class="qr-input design-control" style="flex:1;min-width:100px;margin-bottom:0">
+          <option value="geometric">几何</option>
+          <option value="circles">圆点</option>
+          <option value="waves">波浪</option>
+          <option value="abstract">抽象</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+        <input type="color" id="imgGenColor1" class="img-gen-control" value="#6366f1" style="width:40px;height:40px;border:none;border-radius:8px;cursor:pointer">
+        <input type="color" id="imgGenColor2" class="img-gen-control" value="#06b6d4" style="width:40px;height:40px;border:none;border-radius:8px;cursor:pointer">
+        <input type="color" id="imgGenColor3" class="img-gen-control" value="#a855f7" style="width:40px;height:40px;border:none;border-radius:8px;cursor:pointer">
+      </div>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="imgGenBtn">✨ 生成图片</button>
+        <button class="btn-secondary-tool" id="imgGenDownload">💾 下载PNG</button>
+      </div>
+    </div>
+  </div>
+  <!-- ═══ AI Video Studio ═══ -->
+  <div class="tool-panel" id="panel-video-studio">
+    <div class="tool-box">
+      <h2>🎬 AI视频工坊</h2>
+      <p class="tool-desc">上传视频，查看信息并捕获帧画面</p>
+      <div class="upload-zone" id="videoUpload">
+        <span class="upload-icon">🎬</span>
+        <div class="upload-text">点击或拖拽上传视频</div>
+        <div class="upload-hint">支持 MP4, WebM, MOV</div>
+        <input type="file" accept="video/*" style="display:none" id="videoFileInput">
+      </div>
+      <video id="videoPreview" style="width:100%;max-height:300px;border-radius:8px;margin-top:12px;display:none" controls></video>
+      <div id="videoInfo" style="font-size:0.85em"></div>
+      <canvas id="frameCanvas" style="max-width:100%;border-radius:8px;display:none;margin-top:8px"></canvas>
+      <div class="tool-actions" id="videoActions" style="display:none">
+        <button class="btn-primary-tool" id="captureFrame">📸 捕获帧</button>
+        <button class="btn-secondary-tool" id="videoDownloadFrame">💾 下载帧</button>
+      </div>
+    </div>
+  </div>
+  <!-- ═══ AI PPT Creator ═══ -->
+  <div class="tool-panel" id="panel-ppt">
+    <div class="tool-box">
+      <h2>📊 AI幻灯片制作</h2>
+      <p class="tool-desc">快速创建HTML幻灯片，点击预览并导出</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <input type="text" id="pptTitle" class="qr-input" style="margin-bottom:0" placeholder="标题..." value="AI Tools Hub">
+        <input type="color" id="pptColor" value="#4f46e5" style="width:40px;height:40px;border:none;border-radius:8px;cursor:pointer;justify-self:end">
+      </div>
+      <textarea id="pptContent" class="qr-input" rows="2" placeholder="内容..." style="resize:vertical;margin-bottom:8px">Your AI tools guide</textarea>
+      <div class="tool-actions" style="margin-bottom:12px">
+        <button class="btn-primary-tool" id="pptAddSlide">➕ 添加幻灯片</button>
+        <button class="btn-secondary-tool" id="pptExport">📤 导出/打印</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 2fr;gap:12px">
+        <div id="pptContainer" style="display:flex;flex-direction:column;gap:4px"></div>
+        <div id="pptPreview" style="border-radius:8px;min-height:200px;border:1px solid var(--border);overflow:hidden"></div>
+      </div>
+    </div>
+  </div>
+  <!-- ═══ AI Office Suite ═══ -->
+  <div class="tool-panel" id="panel-office">
+    <div class="tool-box">
+      <h2>📝 AI办公套件</h2>
+      <p class="tool-desc">文本分析与统计工具，实时统计字数、可读性等</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+        <button class="btn-secondary-tool" id="officeTemplate" style="padding:8px 16px;font-size:0.82em">📄 插入模板</button>
+        <button class="btn-secondary-tool" id="officeClear" style="padding:8px 16px;font-size:0.82em">🗑️ 清空</button>
+      </div>
+      <textarea id="officeText" class="qr-input" rows="6" placeholder="输入或粘贴文本进行分析..." style="resize:vertical;font-size:0.9em">Welcome to AI Tools Hub! We provide comprehensive AI tool reviews, tutorials, and free online tools. Start exploring today.</textarea>
+      <div class="tool-result show" id="officeResult">
+        <div id="officeStats"></div>
+      </div>
+    </div>
+  </div>
+  <!-- ═══ AI Design Studio ═══ -->
+  <div class="tool-panel" id="panel-design">
+    <div class="tool-box">
+      <h2>🎯 AI设计工坊</h2>
+      <p class="tool-desc">生成配色方案，选择基色和配色模式</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+        <input type="color" id="designBaseColor" class="design-control" value="#6366f1" style="width:44px;height:44px;border:none;border-radius:8px;cursor:pointer">
+        <select id="designScheme" class="qr-input design-control" style="flex:1;min-width:120px;margin-bottom:0">
+          <option value="analogous">类似色</option>
+          <option value="mono">单色</option>
+          <option value="complementary">互补色</option>
+          <option value="triadic">三角色</option>
+          <option value="tetradic">四角色</option>
+        </select>
+      </div>
+      <canvas id="designCanvas" style="width:100%;max-width:500px;height:250px;border-radius:8px;margin:0 auto;display:block"></canvas>
+      <div id="designColors" style="display:flex;gap:6px;flex-wrap:wrap;margin:12px 0"></div>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="designGenerate">🔄 生成配色</button>
+        <button class="btn-secondary-tool" id="designCopy">📋 复制配色</button>
+      </div>
+    </div>
+  </div>
+  <!-- ═══ AI Automation Hub ═══ -->
+  <div class="tool-panel" id="panel-automation">
+  <!-- ═══ AI Health Calculator ═══ -->
+  <div class="tool-panel" id="panel-health">
+    <div class="tool-box">
+      <h2>🏥 AI健康评估</h2>
+      <p class="tool-desc">输入个人信息，AI 为你计算健康指标并提供个性化建议</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+        <div>
+          <label style="font-size:0.82em;color:var(--text-muted);display:block;margin-bottom:4px">年龄</label>
+          <input type="number" id="healthAge" class="qr-input" style="margin-bottom:0" min="10" max="120" value="30">
+        </div>
+        <div>
+          <label style="font-size:0.82em;color:var(--text-muted);display:block;margin-bottom:4px">性别</label>
+          <select id="healthGender" class="qr-input" style="margin-bottom:0">
+            <option value="male">男性</option>
+            <option value="female">女性</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.82em;color:var(--text-muted);display:block;margin-bottom:4px">身高 (cm)</label>
+          <input type="number" id="healthHeight" class="qr-input" style="margin-bottom:0" min="100" max="250" value="170">
+        </div>
+        <div>
+          <label style="font-size:0.82em;color:var(--text-muted);display:block;margin-bottom:4px">体重 (kg)</label>
+          <input type="number" id="healthWeight" class="qr-input" style="margin-bottom:0" min="30" max="300" value="70">
+        </div>
+        <div>
+          <label style="font-size:0.82em;color:var(--text-muted);display:block;margin-bottom:4px">活动水平</label>
+          <select id="healthActivity" class="qr-input" style="margin-bottom:0">
+            <option value="sedentary">久坐不动</option>
+            <option value="light" selected>轻度运动 (1-3天/周)</option>
+            <option value="moderate">中等运动 (3-5天/周)</option>
+            <option value="active">积极运动 (6-7天/周)</option>
+            <option value="very_active">高强度运动</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.82em;color:var(--text-muted);display:block;margin-bottom:4px">健康目标</label>
+          <select id="healthGoal" class="qr-input" style="margin-bottom:0">
+            <option value="maintain">维持体重</option>
+            <option value="lose">减重</option>
+            <option value="gain">增肌</option>
+          </select>
+        </div>
+      </div>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="healthCalc">🩺 开始评估</button>
+        <button class="btn-secondary-tool" id="healthReset" onclick="document.getElementById('healthResults').style.display='none'">🔄 重置</button>
+      </div>
+      <div class="tool-result" id="healthResults" style="margin-top:16px"></div>
+    </div>
+  </div>
+    <div class="tool-box">
+      <h2>⚙️ 自动化工作台</h2>
+      <p class="tool-desc">任务管理 + 专注计时器</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <h3 style="font-size:0.95em;margin-bottom:8px;color:var(--text)">📋 任务列表</h3>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <input type="text" id="automationTask" class="qr-input" style="margin-bottom:0;font-size:0.85em;padding:8px 12px" placeholder="添加任务...">
+            <button class="btn-primary-tool" id="automationAdd" style="padding:8px 16px;font-size:0.82em">➕</button>
+          </div>
+          <div id="automationList"></div>
+        </div>
+        <div>
+          <h3 style="font-size:0.95em;margin-bottom:8px;color:var(--text)">⏱️ 专注计时</h3>
+          <div style="text-align:center;padding:20px;background:var(--bg-alt);border-radius:12px">
+            <div id="automationTimer" style="font-size:2.5em;font-weight:700;color:var(--primary);font-family:monospace">00:00</div>
+            <div class="tool-actions" style="justify-content:center;margin-top:12px">
+              <button class="btn-primary-tool" id="automationStart" style="padding:8px 20px;font-size:0.85em">▶ 开始</button>
+              <button class="btn-secondary-tool" id="automationReset" style="padding:8px 20px;font-size:0.85em">↺ 重置</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tool-panel" id="panel-tts">
+    <div class="tool-box">
+      <h2>🔊 文字转语音</h2>
+      <p class="tool-desc">使用浏览器内置语音合成，将文字转为语音</p>
+      <textarea class="qr-input" id="ttsText" rows="4" placeholder="输入要朗读的文字..." style="resize:vertical">欢迎使用 AI Tools Hub！我们提供最全面的AI工具评测和教程。</textarea>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        <select id="ttsVoice" class="qr-input" style="flex:1;min-width:200px;margin-bottom:0"></select>
+        <select id="ttsRate" class="qr-input" style="width:100px;margin-bottom:0">
+          <option value="0.5">0.5x</option>
+          <option value="0.75">0.75x</option>
+          <option value="1" selected>1x</option>
+          <option value="1.25">1.25x</option>
+          <option value="1.5">1.5x</option>
+          <option value="2">2x</option>
+        </select>
+      </div>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="ttsPlay">🔊 朗读</button>
+        <button class="btn-secondary-tool" id="ttsPause">⏸️ 暂停</button>
+        <button class="btn-secondary-tool" id="ttsStop">⏹️ 停止</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/static/js/tools-enhanced.js"></script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+/* ═══ Tab Switching ═══ */
+document.querySelectorAll('.tool-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+/* ═══ Generic Upload Helper ═══ */
+function setupUpload(zoneId, inputId, callback) {
+  const zone = document.getElementById(zoneId);
+  const input = document.getElementById(inputId);
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) callback(e.dataTransfer.files[0]);
+  });
+  input.addEventListener('change', () => { if (input.files[0]) callback(input.files[0]); });
+}
+
+/* ═══ Image Filter Tool ═══ */
+(function() {
+  const canvas = document.getElementById('filterCanvas');
+  const ctx = canvas.getContext('2d');
+  let img = null;
+  const filterState = { brightness: 100, contrast: 100, saturate: 100, 'hue-rotate': 0, blur: 0, grayscale: 0 };
+
+  setupUpload('filterUpload', 'filterFileInput', file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      img = new Image();
+      img.onload = () => {
+        canvas.width = Math.min(img.width, 600);
+        canvas.height = img.height * (canvas.width / img.width);
+        canvas.style.display = 'block';
+        document.getElementById('filterControls').style.display = 'grid';
+        document.getElementById('filterActions').style.display = 'flex';
+        document.querySelector('#filterUpload .upload-text').textContent = '📸 ' + file.name;
+        applyFilters();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.querySelectorAll('#filterControls input[type="range"]').forEach(input => {
+    input.addEventListener('input', () => {
+      const f = input.dataset.filter;
+      filterState[f] = input.value;
+      document.getElementById('val-' + f).textContent = input.value;
+      applyFilters();
+    });
+  });
+
+  function applyFilters() {
+    if (!img) return;
+    ctx.filter = `brightness(${filterState.brightness}%) contrast(${filterState.contrast}%) saturate(${filterState.saturate}%) hue-rotate(${filterState['hue-rotate']}deg) blur(${filterState.blur}px) grayscale(${filterState.grayscale}%)`;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  }
+
+  document.getElementById('filterDownload').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'filtered-image.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  document.getElementById('filterReset').addEventListener('click', () => {
+    document.querySelectorAll('#filterControls input[type="range"]').forEach(input => {
+      input.value = input.dataset.filter === 'brightness' || input.dataset.filter === 'contrast' ? '100' :
+                    input.dataset.filter === 'saturate' ? '100' : '0';
+      filterState[input.dataset.filter] = input.value;
+      document.getElementById('val-' + input.dataset.filter).textContent = input.value;
+    });
+    applyFilters();
+  });
+})();
+
+/* ═══ Color Palette ═══ */
+(function() {
+  const canvas = document.getElementById('paletteCanvas');
+  const ctx = canvas.getContext('2d');
+
+  setupUpload('paletteUpload', 'paletteFileInput', file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = img.width; canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        extractPalette();
+        document.querySelector('#paletteUpload .upload-text').textContent = '📸 ' + file.name;
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  function extractPalette() {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const colorMap = {};
+    const step = 10;
+    for (let i = 0; i < imageData.length; i += 4 * step) {
+      const r = Math.round(imageData[i] / 32) * 32;
+      const g = Math.round(imageData[i+1] / 32) * 32;
+      const b = Math.round(imageData[i+2] / 32) * 32;
+      const key = r + ',' + g + ',' + b;
+      colorMap[key] = (colorMap[key] || 0) + 1;
+    }
+    const sorted = Object.entries(colorMap).sort((a,b) => b[1] - a[1]).slice(0, 8);
+    const grid = document.getElementById('paletteGrid');
+    grid.innerHTML = '';
+    sorted.forEach(([key]) => {
+      const [r,g,b] = key.split(',').map(Number);
+      const hex = '#' + [r,g,b].map(c => c.toString(16).padStart(2,'0')).join('');
+      const div = document.createElement('div');
+      div.className = 'palette-color';
+      div.style.background = hex;
+      div.textContent = hex;
+      grid.appendChild(div);
+    });
+    document.getElementById('paletteResult').classList.add('show');
+    document.getElementById('paletteCopy').onclick = () => {
+      const colors = sorted.map(([key]) => {
+        const [r,g,b] = key.split(',').map(Number);
+        return '#' + [r,g,b].map(c => c.toString(16).padStart(2,'0')).join('');
+      }).join(', ');
+      navigator.clipboard.writeText(colors).then(() => alert('✅ 配色代码已复制!'));
+    };
+  }
+})();
+
+/* ═══ QR Code Generator ═══ */
+(function() {
+  const canvas = document.getElementById('qrCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function generateQR(text) {
+    const size = 280;
+    canvas.width = size; canvas.height = size;
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, size, size);
+    const data = text + '##';
+    const len = data.length;
+    const cellSize = size / (Math.ceil(Math.sqrt(len)) + 2);
+    const cols = Math.ceil(Math.sqrt(len));
+    const offsetX = (size - cols * cellSize) / 2;
+    const offsetY = offsetX;
+
+    ctx.fillStyle = '#000';
+    for (let i = 0; i < len && i < 400; i++) {
+      const x = offsetX + (i % cols) * cellSize;
+      const y = offsetY + Math.floor(i / cols) * cellSize;
+      const charCode = data.charCodeAt(i);
+      // Simple pattern based on character code
+      const bits = (charCode * 2654435761) >>> 0;
+      for (let b = 0; b < 8 && b < 64; b++) {
+        if ((bits >> (b % 8)) & 1) {
+          const bx = x + (b % 8) * (cellSize / 8);
+          const by = y + Math.floor(b / 8) * (cellSize / 8);
+          ctx.fillRect(bx, by, cellSize / 8 + 0.5, cellSize / 8 + 0.5);
+        }
+      }
+    }
+    // Finder patterns
+    [[0,0],[0,cols-1],[cols-1,0]].forEach(([r,c]) => {
+      const fx = offsetX + r * cellSize - cellSize;
+      const fy = offsetY + c * cellSize - cellSize;
+      ctx.fillStyle = '#000';
+      ctx.fillRect(fx, fy, cellSize * 3 + 1, cellSize * 3 + 1);
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(fx + cellSize * 0.5, fy + cellSize * 0.5, cellSize * 2, cellSize * 2);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(fx + cellSize, fy + cellSize, cellSize + 0.5, cellSize + 0.5);
+    });
+  }
+
+  document.getElementById('qrGenerate').addEventListener('click', () => {
+    const text = document.getElementById('qrInput').value || 'https://luaitools.com';
+    generateQR(text);
+  });
+
+  document.getElementById('qrDownload').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'qrcode.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  generateQR('https://luaitools.com');
+})();
+
+/* ═══ Prompt Builder ═══ */
+(function() {
+  document.getElementById('promptGenerate').addEventListener('click', () => {
+    const role = document.getElementById('promptRole').value;
+    const action = document.getElementById('promptAction').value;
+    const topic = document.getElementById('promptTopic').value;
+    const format = document.getElementById('promptFormat').value || '';
+    if (!topic) { alert('请输入主题'); return; }
+    const prompt = role + action + '「' + topic + '」。' + format;
+    const result = document.getElementById('promptResult');
+    result.textContent = prompt;
+    result.classList.add('show');
+  });
+})();
+
+/* ═══ Background Remove ═══ */
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  const resultCanvas = document.getElementById('bgResultCanvas');
+  const resultCtx = resultCanvas.getContext('2d');
+  let imgData = null;
+
+  setupUpload('bgUpload', 'bgFileInput', file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        canvas.width = Math.min(img.width, 300);
+        canvas.height = img.height * (canvas.width / img.width);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.style.display = 'block';
+        document.getElementById('bgActions').style.display = 'flex';
+        document.querySelector('#bgUpload .upload-text').textContent = '📸 ' + file.name;
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('bgRemove').addEventListener('click', () => {
+    const data = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    resultCanvas.width = canvas.width;
+    resultCanvas.height = canvas.height;
+    const pixels = data.data;
+
+    // Find dominant background color (corners)
+    const cornerColors = [];
+    for (let cy = 0; cy < canvas.height; cy += Math.max(1, canvas.height - 1)) {
+      for (let cx = 0; cx < canvas.width; cx += Math.max(1, canvas.width - 1)) {
+        const i = (cy * canvas.width + cx) * 4;
+        cornerColors.push({r: pixels[i], g: pixels[i+1], b: pixels[i+2]});
+      }
+    }
+    const bg = cornerColors.reduce((acc, c) => ({r: acc.r + c.r, g: acc.g + c.g, b: acc.b + c.b}), {r:0,g:0,b:0});
+    bg.r /= cornerColors.length; bg.g /= cornerColors.length; bg.b /= cornerColors.length;
+
+    const threshold = 60;
+    for (let i = 0; i < pixels.length; i += 4) {
+      const dr = pixels[i] - bg.r;
+      const dg = pixels[i+1] - bg.g;
+      const db = pixels[i+2] - bg.b;
+      const dist = Math.sqrt(dr*dr + dg*dg + db*db);
+      if (dist < threshold) pixels[i+3] = 0;
+    }
+    resultCtx.putImageData(data, 0, 0);
+    resultCanvas.style.display = 'block';
+  });
+
+  document.getElementById('bgDownload').addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = 'no-bg.png';
+    link.href = resultCanvas.toDataURL('image/png');
+    link.click();
+  });
+})();
+
+/* ═══ Text to Speech ═══ */
+(function() {
+  let synth = window.speechSynthesis;
+  let utterance = null;
+
+  function loadVoices() {
+    const voices = synth.getVoices();
+    const select = document.getElementById('ttsVoice');
+    select.innerHTML = '';
+    const zhVoices = voices.filter(v => v.lang.startsWith('zh'));
+    const enVoices = voices.filter(v => v.lang.startsWith('en'));
+    const preferred = [...zhVoices, ...enVoices, ...voices];
+    const added = new Set();
+    preferred.forEach(v => {
+      if (!added.has(v.name)) {
+        added.add(v.name);
+        const opt = document.createElement('option');
+        opt.value = v.name;
+        opt.textContent = v.name + ' (' + v.lang + ')';
+        select.appendChild(opt);
+      }
+    });
+  }
+  if (synth) { loadVoices(); if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices; }
+
+  document.getElementById('ttsPlay').addEventListener('click', () => {
+    if (!synth) return alert('浏览器不支持语音合成');
+    synth.cancel();
+    const text = document.getElementById('ttsText').value;
+    if (!text) return alert('请输入文字');
+    utterance = new SpeechSynthesisUtterance(text);
+    const selectedVoice = document.getElementById('ttsVoice').value;
+    utterance.voice = synth.getVoices().find(v => v.name === selectedVoice) || null;
+    utterance.rate = parseFloat(document.getElementById('ttsRate').value);
+    synth.speak(utterance);
+  });
+
+  document.getElementById('ttsPause').addEventListener('click', () => {
+    if (synth.speaking && !synth.paused) synth.pause();
+    else if (synth.paused) synth.resume();
+  });
+
+  document.getElementById('ttsStop').addEventListener('click', () => { synth.cancel(); });
+})();
+</script>
+<script src="/static/js/tools-enhanced.js"></script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block extra_head %}
+<meta name="keywords" content="AI video tutorials, AI tools demo, ChatGPT tutorial, AI guide video">
+<style>
+.video-container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+.video-header { text-align: center; margin-bottom: 48px; }
+.video-header h1 { font-size: 2.2em; font-weight: 700; margin-bottom: 12px; }
+.video-header p { color: var(--text-secondary); font-size: 1.05em; }
+
+.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+.video-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden; transition: all 0.3s;
+}
+.video-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary-light); }
+.video-card iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+.video-info { padding: 20px; }
+.video-info h3 { font-size: 1em; font-weight: 600; margin-bottom: 8px; line-height: 1.4; }
+.video-info h3 a { color: var(--text); }
+.video-info h3 a:hover { color: var(--primary); }
+.video-info p { font-size: 0.85em; color: var(--text-secondary); line-height: 1.5; }
+.video-meta { display: flex; gap: 12px; font-size: 0.78em; color: var(--text-muted); margin-top: 8px; }
+
+.video-categories { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
+.video-cat-btn {
+  padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border);
+  background: var(--bg-card); cursor: pointer; font-size: 0.85em; font-weight: 500;
+  transition: all 0.3s; color: var(--text-secondary);
+}
+.video-cat-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+.video-cat-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.category-section { margin-bottom: 48px; }
+.category-section h2 { font-size: 1.4em; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="video-container">
+  <div class="video-header">
+    <h1 data-i18n="videos.page.title">🎬 AI工具视频教程</h1>
+    <p>精选AI工具使用教程、深度评测与行业洞察视频</p>
+  </div>
+
+    <!-- Ad Banner -->
+  <div style="max-width:700px;margin:0 auto 16px">
+    <ins class="adsbygoogle"
+         style="display:block;min-height:90px"
+         data-ad-client="ca-pub-7089877911189758"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  <div class="video-categories" id="videoCats">
+    <button class="video-cat-btn active" data-cat="all" data-i18n="videos.all">全部</button>
+    <button class="video-cat-btn" data-cat="chatgpt" data-i18n="videos.chatgpt">🤖 ChatGPT</button>
+    <button class="video-cat-btn" data-cat="image" data-i18n="videos.image">🎨 AI图像</button>
+    <button class="video-cat-btn" data-cat="video" data-i18n="videos.video">🎬 AI视频</button>
+    <button class="video-cat-btn" data-cat="coding" data-i18n="videos.coding">💻 AI编程</button>
+    <button class="video-cat-btn" data-cat="tutorial" data-i18n="videos.tutorial">📚 教程</button>
+  </div>
+
+  <div class="video-grid" id="videoGrid" style="margin-top:16px">
+    {% for video in videos %}
+    <div class="video-card" data-cat="{{ video.category }}">
+      <iframe src="https://www.youtube.com/embed/{{ video.id }}" 
+        title="{{ video.title }}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+        allowfullscreen loading="lazy"></iframe>
+      <div class="video-info">
+        <h3><a href="https://www.youtube.com/watch?v={{ video.id }}" target="_blank" rel="noopener">{{ video.title }}</a></h3>
+        <p>{{ video.desc }}</p>
+        <div class="video-meta">
+          <span>{{ video.category_icon }} {{ video.category_name }}</span>
+          <span>📺 YouTube</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+/* Video category filter */
+document.querySelectorAll('.video-cat-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.video-cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const cat = btn.dataset.cat;
+    document.querySelectorAll('.video-card').forEach(card => {
+      card.style.display = (cat === 'all' || card.dataset.cat === cat) ? 'block' : 'none';
+    });
+  });
+});
+</script>
+{% endblock %}
