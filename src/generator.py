@@ -351,6 +351,7 @@ class SiteGenerator:
       <pubDate>{a.get('date','')}</pubDate>
       <guid>{SITE_URL}/article/{a['slug']}/</guid>
     </item>""")
+        items_joined = chr(10).join(items)
         rss = f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -359,7 +360,7 @@ class SiteGenerator:
     <description>{SITE_DESC}</description>
     <language>en</language>
     <atom:link href="{SITE_URL}/rss.xml" rel="self" type="application/rss+xml"/>
-{"\n".join(items)}
+{items_joined}
   </channel>
 </rss>"""
         self._write("rss.xml", rss)
