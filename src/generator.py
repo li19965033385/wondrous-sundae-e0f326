@@ -96,6 +96,7 @@ class SiteGenerator:
             "len": len,
             "enumerate": enumerate,
             "range": range,
+            "organization_ld": json.dumps(self.organization_ld(), ensure_ascii=False),
         })
 
     def _build_tag_index(self):
@@ -132,21 +133,38 @@ class SiteGenerator:
 
     # ── JSON-LD helpers ──────────────────────────────────────────────
 
-    def article_ld(self, article):
+    def organization_ld(self):
+        return {
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "@id": f"{SITE_URL}/#organization",
+            "name": SITE_NAME,
+            "alternateName": SITE_NAME_CN,
+            "url": SITE_URL,
+            "logo": {"@type": "ImageObject", "url": f"{SITE_URL}/img/logo.png"},
+        }
+
+    def article_ld(self, article, lang="en"):
+        prefix = "/zh" if lang == "zh" else ""
+        title = article.get("title_cn", article["title"]) if lang == "zh" else article["title"]
+        description = article.get("description_cn", article.get("description", "")) if lang == "zh" else article.get("description", "")
+        image = article.get("og_image", "/img/og-default.jpg")
         return {
             "@context": "https://schema.org",
             "@type": "Article",
-            "headline": article["title"],
-            "description": article.get("description", ""),
+            "headline": title,
+            "description": description,
+            "inLanguage": "zh-CN" if lang == "zh" else "en",
             "datePublished": article.get("date", ""),
-            "dateModified": article.get("date", ""),
-            "author": {"@type": "Organization", "name": SITE_NAME},
+            "dateModified": article.get("updated", article.get("date", "")),
+            "image": f"{SITE_URL}{image}",
+            "author": {"@id": f"{SITE_URL}/#organization"},
             "publisher": {
                 "@type": "Organization", "name": SITE_NAME,
                 "logo": {"@type": "ImageObject", "url": f"{SITE_URL}/img/logo.png"},
             },
             "mainEntityOfPage": {
-                "@type": "WebPage", "@id": f"{SITE_URL}/article/{article['slug']}/",
+                "@type": "WebPage", "@id": f"{SITE_URL}{prefix}/article/{article['slug']}/",
             },
         }
 
@@ -157,14 +175,7 @@ class SiteGenerator:
             "name": SITE_NAME,
             "url": SITE_URL,
             "description": SITE_DESC,
-            "potentialAction": {
-                "@type": "SearchAction",
-                "target": {
-                    "@type": "EntryPoint",
-                    "urlTemplate": f"{SITE_URL}/search/?q={{search_term_string}}",
-                },
-                "query-input": "required name=search_term_string",
-            },
+            "publisher": {"@id": f"{SITE_URL}/#organization"},
         }
 
     def faq_ld(self, questions):
@@ -224,14 +235,18 @@ class SiteGenerator:
         cname = self.categories.get(cid, {}).get("name", cid)
         crumbs = [("Home", "/"), (cname, f"/category/{cid}/"), (article["title"], f"/article/{article['slug']}/")]
         ld_bread = build_breadcrumbs(crumbs)
-        ld_all = [self.article_ld(article), ld_bread]
-
         base_path = f"/article/{article['slug']}/"
         for lang in ("en", "zh"):
             ctx = self.language_context(lang, base_path)
+            localized_bread = build_breadcrumbs([
+                (("首页" if lang == "zh" else "Home"), ctx["lang_prefix"] + "/"),
+                ((self.categories.get(cid, {}).get("name_cn", cname) if lang == "zh" else cname), f"{ctx['lang_prefix']}/category/{cid}/"),
+                ((article.get("title_cn", article["title"]) if lang == "zh" else article["title"]), ctx["page_url"]),
+            ])
+            ld_all = [self.article_ld(article, lang), localized_bread]
             html = self.render_page("article.html", article=article, related=related,
                 recent_articles=self.recent_articles, tags=list(self.tags.keys()),
-                breadcrumbs=json.dumps(ld_bread, ensure_ascii=False), ld_json=json.dumps(ld_all, ensure_ascii=False),
+                breadcrumbs=json.dumps(localized_bread, ensure_ascii=False), ld_json=json.dumps(ld_all, ensure_ascii=False),
                 page_title=f"{article.get('title_cn', article['title']) if lang == 'zh' else article['title']} - {SITE_NAME}",
                 page_description=(article.get("description_cn", article.get("description", "")) if lang == "zh" else article.get("description", "")),
                 og_type="article", og_image=article.get("og_image", "/img/og-default.jpg"), **ctx)
@@ -264,6 +279,7 @@ class SiteGenerator:
                 html = self.render_page("tag.html", tag=tag, tag_slug=slug, articles=tag_arts, total=len(tag_arts),
                     breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False), page_title=f"{tag} - {SITE_NAME}",
                     page_description=(f"所有关于 {tag} 的文章" if lang == "zh" else f"Articles about {tag} - AI tools, tutorials and resources"),
+                    robots_directive=("index, follow, max-image-preview:large" if len(tag_arts) >= 2 else "noindex, follow"),
                     og_type="website", **ctx)
                 path = f"tag/{slug}/index.html" if lang == "en" else f"zh/tag/{slug}/index.html"
                 self._write(path, html)
@@ -282,7 +298,7 @@ class SiteGenerator:
         html = self.render_page("404.html", **self.language_context("en", "/404.html"),
             page_title="Page Not Found",
             page_description="The page you are looking for does not exist.",
-            og_type="website",
+            robots_directive="noindex, follow", og_type="website",
         )
         self._write("404.html", html)
 
@@ -334,9 +350,17 @@ class SiteGenerator:
             tools.append({"name":name,"category":cat,"category_name":cat_map[cat]["name"],"category_name_zh":cat_map[cat]["name_zh"],"description":desc,"description_zh":desc_zh,"price":price,"price_zh":price_zh,"url":url})
         for lang in ("en", "zh"):
             ctx = self.language_context(lang, "/ai-directory/")
+            item_list = {
+                "@context": "https://schema.org", "@type": "ItemList",
+                "name": "AI 工具目录" if lang == "zh" else "Best AI Tools Directory",
+                "numberOfItems": len(tools),
+                "itemListElement": [{"@type": "ListItem", "position": i, "name": t["name"], "url": t["url"]} for i, t in enumerate(tools, 1)],
+            }
             html = self.render_page("ai_directory.html", tools=tools, directory_categories=categories,
-                page_title=("AI Directory - Discover the Best AI Tools" if lang == "en" else "AI 工具目录 - 发现优质 AI 产品"),
-                page_description=("A curated directory of AI tools for chat, design, video, coding and productivity." if lang == "en" else "精选 AI 工具目录，覆盖聊天、设计、视频、编程与效率办公。"),
+                breadcrumbs=json.dumps(build_breadcrumbs([(("首页" if lang == "zh" else "Home"), ctx["lang_prefix"] + "/"), (("AI 工具目录" if lang == "zh" else "AI Tools Directory"), ctx["page_url"])]), ensure_ascii=False),
+                ld_json=json.dumps(item_list, ensure_ascii=False),
+                page_title=("Best AI Tools Directory 2026: Chat, Image, Video & Coding" if lang == "en" else "2026 最佳 AI 工具目录：聊天、绘图、视频与编程"),
+                page_description=("Discover and compare the best AI tools of 2026 for chat, image generation, video, coding and productivity. Curated descriptions and free options." if lang == "en" else "发现并比较 2026 年热门 AI 工具，覆盖聊天、AI 绘图、视频生成、编程和效率办公，包含精选介绍与免费工具。"),
                 og_type="website", **ctx)
             self._write("ai-directory/index.html" if lang == "en" else "zh/ai-directory/index.html", html)
 
@@ -358,21 +382,21 @@ class SiteGenerator:
             {"id": "N3M4L5K6J7I8", "title": "Cursor AI: AI-Powered Code Editor Review", "desc": "Can Cursor replace VS Code? In-depth review of the AI-native code editor with real coding demos.", "category": "coding", "category_icon": "💻", "category_name": "AI编程"},
         ]
         crumbs = [("Home", "/"), ("Videos", "/videos/")]
-        html = self.render_page("videos.html",
-            videos=videos,
-            breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
-            page_title=f"AI Video Tutorials - {SITE_NAME}",
-            page_description="Watch AI tools tutorials, reviews and demos. Learn ChatGPT, Midjourney, Runway and more through video guides.",
-            page_url="/videos/", og_type="website",
-        )
-        self._write("videos/index.html", html)
+        for lang in ("en", "zh"):
+            ctx = self.language_context(lang, "/videos/")
+            html = self.render_page("videos.html", videos=videos,
+                breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
+                page_title=(f"AI Tool Video Tutorials & Reviews 2026 - {SITE_NAME}" if lang == "en" else f"2026 AI 工具视频教程与评测 - {SITE_NAME}"),
+                page_description=("Watch practical AI tool tutorials, reviews and demos for ChatGPT, Midjourney, Runway, coding assistants and more." if lang == "en" else "观看 ChatGPT、Midjourney、Runway、AI 编程助手等热门工具的实用教程、评测和演示。"),
+                og_type="website", **ctx)
+            self._write("videos/index.html" if lang == "en" else "zh/videos/index.html", html)
 
 
     def generate_sitemap(self):
         urlset = Element("urlset")
         urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
 
-        for path, prio, freq in [("/", "1.0", "daily"), ("/zh/", "1.0", "daily"), ("/about/", "0.7", "monthly"), ("/zh/about/", "0.7", "monthly"), ("/tools/", "0.8", "weekly"), ("/zh/tools/", "0.8", "weekly"), ("/videos/", "0.7", "weekly")]:
+        for path, prio, freq in [("/", "1.0", "daily"), ("/zh/", "1.0", "daily"), ("/about/", "0.7", "monthly"), ("/zh/about/", "0.7", "monthly"), ("/tools/", "0.8", "weekly"), ("/zh/tools/", "0.8", "weekly"), ("/ai-directory/", "0.9", "weekly"), ("/zh/ai-directory/", "0.9", "weekly"), ("/videos/", "0.7", "weekly"), ("/zh/videos/", "0.7", "weekly")]:
             url = SubElement(urlset, "url")
             SubElement(url, "loc").text = f"{SITE_URL}{path}"
             SubElement(url, "priority").text = prio
@@ -394,6 +418,8 @@ class SiteGenerator:
                 SubElement(url, "changefreq").text = "weekly"
 
         for tag in self.tags:
+            if len(self.tags[tag]) < 2:
+                continue
             slug = slugify(tag)
             for prefix in ("", "/zh"):
                 url = SubElement(urlset, "url")

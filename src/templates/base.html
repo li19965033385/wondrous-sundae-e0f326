@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="{{ robots_directive|default('index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1') }}">
   <meta name="author" content="AI Tools Hub">
   <link rel="alternate" hreflang="en" href="{{ english_url }}">
   <link rel="alternate" hreflang="zh-CN" href="{{ chinese_url }}">
@@ -19,9 +19,21 @@
   <meta property="og:url" content="{{ site_url }}{{ page_url }}">
   <meta property="og:type" content="{{ og_type }}">
   <meta property="og:site_name" content="{{ site_name }}">
+  <meta property="og:locale" content="{{ 'zh_CN' if current_lang == 'zh' else 'en_US' }}">
+  <meta property="og:locale:alternate" content="{{ 'en_US' if current_lang == 'zh' else 'zh_CN' }}">
+  <meta property="og:image" content="{{ site_url }}{{ og_image|default('/img/og-default.jpg') }}">
+  <meta property="og:image:alt" content="{{ page_title }}">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="/static/css/style.css?v=20260725d">
+  <meta name="twitter:title" content="{{ page_title }}">
+  <meta name="twitter:description" content="{{ page_description }}">
+  <meta name="twitter:image" content="{{ site_url }}{{ og_image|default('/img/og-default.jpg') }}">
+  <link rel="stylesheet" href="/static/css/style.css?v=20260725e">
   <link rel="alternate" type="application/rss+xml" title="{{ site_name }}" href="{{ site_url }}/rss.xml">
+  <script type="application/ld+json">{{ organization_ld|safe }}</script>
+  {% if ld_json %}<script type="application/ld+json">{{ ld_json|safe }}</script>
+  {% elif breadcrumbs %}<script type="application/ld+json">{{ breadcrumbs|safe }}</script>{% endif %}
+  {% if website_ld %}<script type="application/ld+json">{{ website_ld|safe }}</script>{% endif %}
+  {% if faq_ld %}<script type="application/ld+json">{{ faq_ld|safe }}</script>{% endif %}
   {% block extra_head %}{% endblock %}
 </head>
 <body>
