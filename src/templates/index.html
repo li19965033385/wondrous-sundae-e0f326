@@ -11,21 +11,21 @@
   <div class="container hero-layout">
     <div class="hero-copy">
       <div class="eyebrow"><span class="status-dot"></span> AI KNOWLEDGE ENGINE · 2026</div>
-      <h1><span data-zh="找到真正" data-en="Discover AI tools">找到真正</span><br><span class="gradient-text" data-zh="值得使用的 AI 工具" data-en="that are truly worth using">值得使用的 AI 工具</span></h1>
-      <p class="hero-lead" data-zh="从海量产品中筛选高价值工具，用真实测试、深度评测与实战教程，帮你更快构建下一代工作流。" data-en="We filter the noise through real testing, in-depth reviews and practical guides, helping you build your next-generation workflow faster.">从海量产品中筛选高价值工具，用真实测试、深度评测与实战教程，帮你更快构建下一代工作流。</p>
+      <h1><span>{{ '找到真正' if current_lang == 'zh' else 'Discover AI tools' }}</span><br><span class="gradient-text">{{ '值得使用的 AI 工具' if current_lang == 'zh' else 'that are truly worth using' }}</span></h1>
+      <p class="hero-lead">{{ '从海量产品中筛选高价值工具，用真实测试、深度评测与实战教程，帮你更快构建下一代工作流。' if current_lang == 'zh' else 'We filter the noise through real testing, in-depth reviews and practical guides, helping you build your next-generation workflow faster.' }}</p>
       <div class="hero-search-shell">
         <div class="hero-search-icon" aria-hidden="true"></div>
-        <input type="text" placeholder="搜索工具、场景或教程…" data-zh="搜索工具、场景或教程…" data-en="Search tools, use cases or tutorials…" id="heroSearchInput" onkeydown="if(event.key==='Enter'){window.openSearch();}">
-        <button onclick="window.openSearch()"><span data-zh="探索资源" data-en="Explore">探索资源</span> <span>↗</span></button>
+        <input type="text" placeholder="{{ '搜索工具、场景或教程…' if current_lang == 'zh' else 'Search tools, use cases or tutorials…' }}" id="heroSearchInput" onkeydown="if(event.key==='Enter'){window.openSearch();}">
+        <button onclick="window.openSearch()"><span>{{ '探索资源' if current_lang == 'zh' else 'Explore' }}</span> <span>↗</span></button>
       </div>
       <div class="hero-trust">
-        <span>热门探索</span>
+        <span>{{ '热门探索' if current_lang == 'zh' else 'Popular searches' }}</span>
         <a href="{{ lang_prefix }}/tag/chatgpt/">ChatGPT</a>
         <a href="{{ lang_prefix }}/tag/midjourney/">Midjourney</a>
         <a href="{{ lang_prefix }}/category/ai-coding/">AI Coding</a>
       </div>
     </div>
-    <div class="hero-console" aria-label="AI 工具数据概览">
+    <div class="hero-console" aria-label="{{ 'AI 工具数据概览' if current_lang == 'zh' else 'AI tools data overview' }}">
       <div class="console-topbar">
         <div class="console-dots"><i></i><i></i><i></i></div>
         <span>AI TOOLS / LIVE INDEX</span>
@@ -41,9 +41,9 @@
         <div class="data-node node-d">VIDEO</div>
       </div>
       <div class="console-stats">
-        <div><strong>{{ recent_articles|length }}+</strong><span>深度评测</span></div>
-        <div><strong>{{ categories|length }}</strong><span>专业分类</span></div>
-        <div><strong>{{ tags|length }}+</strong><span>场景标签</span></div>
+        <div><strong>{{ recent_articles|length }}+</strong><span>{{ '深度评测' if current_lang == 'zh' else 'In-depth reviews' }}</span></div>
+        <div><strong>{{ categories|length }}</strong><span>{{ '专业分类' if current_lang == 'zh' else 'Categories' }}</span></div>
+        <div><strong>{{ tags|length }}+</strong><span>{{ '场景标签' if current_lang == 'zh' else 'Use-case tags' }}</span></div>
       </div>
     </div>
   </div>
@@ -51,7 +51,7 @@
 
 <section class="signal-strip">
   <div class="container signal-inner">
-    <span class="signal-label">持续追踪</span>
+    <span class="signal-label">{{ '持续追踪' if current_lang == 'zh' else 'Tracking now' }}</span>
     <span>GENERATIVE AI</span><i></i><span>AGENTIC WORKFLOW</span><i></i><span>CREATIVE INTELLIGENCE</span><i></i><span>PRODUCTIVITY</span>
   </div>
 </section>
@@ -61,27 +61,27 @@
     <div class="section-heading-row">
       <div>
         <div class="eyebrow">BUILT FOR EVERYDAY CREATION</div>
-        <h2 data-zh="即开即用的智能工具箱" data-en="Smart tools, ready when you are">即开即用的智能工具箱</h2>
-        <p data-zh="无需注册，在浏览器中完成高频创作任务。" data-en="No registration. Complete everyday creative tasks in your browser.">无需注册，在浏览器中完成高频创作任务。</p>
+        <h2>{{ '即开即用的智能工具箱' if current_lang == 'zh' else 'Smart tools, ready when you are' }}</h2>
+        <p>{{ '无需注册，在浏览器中完成高频创作任务。' if current_lang == 'zh' else 'No registration. Complete everyday creative tasks in your browser.' }}</p>
       </div>
-      <a href="{{ lang_prefix }}/tools/" class="text-link">查看全部工具 <span>→</span></a>
+      <a href="{{ lang_prefix }}/tools/" class="text-link">{{ '查看全部工具' if current_lang == 'zh' else 'View all tools' }} <span>→</span></a>
     </div>
     <div class="tools-showcase">
       <a href="{{ lang_prefix }}/tools/#image-filter" class="showcase-card showcase-featured">
         <div class="card-index">01</div><span class="card-icon icon-image">✦</span>
-        <div><span class="card-kicker">IMAGE LAB</span><h3>智能图片工作台</h3><p>滤镜、增强与视觉处理，释放图像表达力。</p></div><span class="card-arrow">↗</span>
+        <div><span class="card-kicker">IMAGE LAB</span><h3>{{ '智能图片工作台' if current_lang == 'zh' else 'Smart Image Studio' }}</h3><p>{{ '滤镜、增强与视觉处理，释放图像表达力。' if current_lang == 'zh' else 'Apply filters, enhancements and visual effects directly in your browser.' }}</p></div><span class="card-arrow">↗</span>
       </a>
       <a href="{{ lang_prefix }}/tools/#prompt" class="showcase-card">
         <div class="card-index">02</div><span class="card-icon">⌁</span>
-        <div><span class="card-kicker">PROMPT SYSTEM</span><h3>Prompt 构建器</h3><p>将模糊想法转化为清晰、可复用的提示词。</p></div><span class="card-arrow">↗</span>
+        <div><span class="card-kicker">PROMPT SYSTEM</span><h3>{{ 'Prompt 构建器' if current_lang == 'zh' else 'Prompt Builder' }}</h3><p>{{ '将模糊想法转化为清晰、可复用的提示词。' if current_lang == 'zh' else 'Turn rough ideas into clear, reusable prompts.' }}</p></div><span class="card-arrow">↗</span>
       </a>
       <a href="{{ lang_prefix }}/tools/#palette" class="showcase-card">
         <div class="card-index">03</div><span class="card-icon">◈</span>
-        <div><span class="card-kicker">COLOR ENGINE</span><h3>智能配色提取</h3><p>从图片提取专业色板，快速建立视觉语言。</p></div><span class="card-arrow">↗</span>
+        <div><span class="card-kicker">COLOR ENGINE</span><h3>{{ '智能配色提取' if current_lang == 'zh' else 'Color Palette Extractor' }}</h3><p>{{ '从图片提取专业色板，快速建立视觉语言。' if current_lang == 'zh' else 'Extract polished color palettes from any image.' }}</p></div><span class="card-arrow">↗</span>
       </a>
       <a href="{{ lang_prefix }}/tools/#qr" class="showcase-card">
         <div class="card-index">04</div><span class="card-icon">⌗</span>
-        <div><span class="card-kicker">UTILITY</span><h3>QR 生成器</h3><p>快速生成清晰、稳定、可分享的二维码。</p></div><span class="card-arrow">↗</span>
+        <div><span class="card-kicker">UTILITY</span><h3>{{ 'QR 生成器' if current_lang == 'zh' else 'QR Code Generator' }}</h3><p>{{ '快速生成清晰、稳定、可分享的二维码。' if current_lang == 'zh' else 'Create clean, reliable and shareable QR codes.' }}</p></div><span class="card-arrow">↗</span>
       </a>
     </div>
   </div>
@@ -90,16 +90,16 @@
 <section class="section section-dark-panel">
   <div class="container">
     <div class="section-heading-row">
-        <div><div class="eyebrow">CURATED INTELLIGENCE</div><h2 data-zh="按能力探索 AI 新边界" data-en="Explore the new frontier of AI">按能力探索 AI 新边界</h2><p data-zh="从创意生成到工程效率，找到适合你的技术栈。" data-en="From creative generation to engineering productivity, find your ideal AI stack.">从创意生成到工程效率，找到适合你的技术栈。</p></div>
+        <div><div class="eyebrow">CURATED INTELLIGENCE</div><h2>{{ '按能力探索 AI 新边界' if current_lang == 'zh' else 'Explore the new frontier of AI' }}</h2><p>{{ '从创意生成到工程效率，找到适合你的技术栈。' if current_lang == 'zh' else 'From creative generation to engineering productivity, find your ideal AI stack.' }}</p></div>
     </div>
     <div class="cat-grid cat-grid-premium">
       {% for cat in cats %}
       <a href="{{ lang_prefix }}/category/{{ cat.id }}/" class="cat-card">
         <span class="cat-number">0{{ loop.index }}</span>
         <span class="cat-icon">{{ cat.icon }}</span>
-        <h3 data-zh="{{ cat.name_cn }}" data-en="{{ cat.name }}">{{ cat.name_cn }}</h3>
+        <h3>{{ cat.name_cn if current_lang == 'zh' else cat.name }}</h3>
         <p>{{ cat.description }}</p>
-        <span class="cat-count">{{ cat.count }} 篇精选内容 <b>→</b></span>
+        <span class="cat-count">{{ cat.count }} {{ '篇精选内容' if current_lang == 'zh' else 'curated articles' }} <b>→</b></span>
       </a>
       {% endfor %}
     </div>
@@ -109,26 +109,26 @@
 <section class="section editorial-section">
   <div class="container">
     <div class="section-heading-row">
-      <div><div class="eyebrow">EDITOR'S SIGNAL</div><h2 data-zh="值得投入时间的深度内容" data-en="Deep insights worth your time">值得投入时间的深度内容</h2><p data-zh="拒绝信息噪音，只提供可验证、可落地的判断。" data-en="Less noise. More practical, verifiable insight.">拒绝信息噪音，只提供可验证、可落地的判断。</p></div>
-      <a href="/category/ai-chatbots/" class="text-link">进入内容库 <span>→</span></a>
+      <div><div class="eyebrow">EDITOR'S SIGNAL</div><h2>{{ '值得投入时间的深度内容' if current_lang == 'zh' else 'Deep insights worth your time' }}</h2><p>{{ '拒绝信息噪音，只提供可验证、可落地的判断。' if current_lang == 'zh' else 'Less noise. More practical, verifiable insight.' }}</p></div>
+      <a href="{{ lang_prefix }}/category/ai-chatbots/" class="text-link">{{ '进入内容库' if current_lang == 'zh' else 'Browse the library' }} <span>→</span></a>
     </div>
     <div class="editorial-grid">
       <div class="featured-stack">
         {% for article in featured %}
         <article class="editorial-card{% if loop.first %} editorial-lead{% endif %}">
-          <div class="editorial-meta"><span>{{ categories[article.category].name_cn }}</span><time>{{ article.date }}</time></div>
+          <div class="editorial-meta"><span>{{ categories[article.category].name_cn if current_lang == 'zh' else categories[article.category].name }}</span><time>{{ article.date }}</time></div>
           <h3><a href="{{ lang_prefix }}/article/{{ article.slug }}/">{{ article.title_cn|default(article.title) if current_lang == 'zh' else article.title }}</a></h3>
-          <p data-zh="{{ article.description_cn|default(article.description)|e }}" data-en="{{ article.description|e }}">{{ article.description_cn|default(article.description) }}</p>
+          <p>{{ article.description_cn|default(article.description) if current_lang == 'zh' else article.description }}</p>
           <a href="{{ lang_prefix }}/article/{{ article.slug }}/" class="read-more">{{ '阅读全文' if current_lang == 'zh' else 'Read article' }} <span>↗</span></a>
         </article>
         {% endfor %}
       </div>
       <aside class="latest-panel">
-        <div class="latest-head"><span>最新发布</span><i>LIVE</i></div>
+        <div class="latest-head"><span>{{ '最新发布' if current_lang == 'zh' else 'Latest releases' }}</span><i>LIVE</i></div>
         {% for article in recent_articles[:8] %}
         <a href="{{ lang_prefix }}/article/{{ article.slug }}/" class="latest-row">
           <span class="latest-index">{{ "%02d"|format(loop.index) }}</span>
-          <span class="latest-copy"><b data-zh="{{ article.title_cn|default(article.title)|e }}" data-en="{{ article.title|e }}">{{ article.title_cn|default(article.title) }}</b><small><span data-zh="{{ categories[article.category].name_cn }}" data-en="{{ categories[article.category].name }}">{{ categories[article.category].name_cn }}</span> · {{ article.date }}</small></span>
+          <span class="latest-copy"><b>{{ article.title_cn|default(article.title) if current_lang == 'zh' else article.title }}</b><small><span>{{ categories[article.category].name_cn if current_lang == 'zh' else categories[article.category].name }}</span> · {{ article.date }}</small></span>
           <span class="latest-arrow">→</span>
         </a>
         {% endfor %}
@@ -139,20 +139,20 @@
 
 <section class="section methodology-section">
   <div class="container methodology-grid">
-    <div class="method-copy"><div class="eyebrow">WHY AI TOOLS HUB</div><h2>我们替你穿过噪音，<br>留下真正有价值的答案。</h2><p>每一篇内容都从真实使用出发，兼顾能力边界、应用成本和长期价值。</p><a href="/about/" class="btn btn-primary">了解我们的评测体系 <span>→</span></a></div>
+    <div class="method-copy"><div class="eyebrow">WHY AI TOOLS HUB</div><h2>{{ '我们替你穿过噪音，' if current_lang == 'zh' else 'We cut through the noise' }}<br>{{ '留下真正有价值的答案。' if current_lang == 'zh' else 'to find what is genuinely useful.' }}</h2><p>{{ '每一篇内容都从真实使用出发，兼顾能力边界、应用成本和长期价值。' if current_lang == 'zh' else 'Our coverage focuses on practical use, capability limits, cost and long-term value.' }}</p><a href="{{ lang_prefix }}/about/" class="btn btn-primary">{{ '了解我们的评测体系' if current_lang == 'zh' else 'See how we evaluate tools' }} <span>→</span></a></div>
     <div class="method-list">
-      <div><span>01</span><h3>真实测试</h3><p>基于实际任务验证，不复述营销文案。</p></div>
-      <div><span>02</span><h3>深度拆解</h3><p>从体验、能力、价格与适用场景多维分析。</p></div>
-      <div><span>03</span><h3>持续校准</h3><p>追踪产品演进，让结论跟上 AI 速度。</p></div>
-      <div><span>04</span><h3>双语视野</h3><p>连接全球信息，为中文用户降低认知成本。</p></div>
+      <div><span>01</span><h3>{{ '真实测试' if current_lang == 'zh' else 'Practical testing' }}</h3><p>{{ '基于实际任务验证，不复述营销文案。' if current_lang == 'zh' else 'Validated through real tasks, not repeated marketing claims.' }}</p></div>
+      <div><span>02</span><h3>{{ '深度拆解' if current_lang == 'zh' else 'Detailed analysis' }}</h3><p>{{ '从体验、能力、价格与适用场景多维分析。' if current_lang == 'zh' else 'Usability, capabilities, pricing and use cases considered together.' }}</p></div>
+      <div><span>03</span><h3>{{ '持续校准' if current_lang == 'zh' else 'Continuous updates' }}</h3><p>{{ '追踪产品演进，让结论跟上 AI 速度。' if current_lang == 'zh' else 'Tracking product changes so recommendations stay relevant.' }}</p></div>
+      <div><span>04</span><h3>{{ '双语视野' if current_lang == 'zh' else 'Global perspective' }}</h3><p>{{ '连接全球信息，为中文用户降低认知成本。' if current_lang == 'zh' else 'Connecting useful AI knowledge across English and Chinese markets.' }}</p></div>
     </div>
   </div>
 </section>
 
 <section class="cta-section cta-premium">
   <div class="container cta-inner">
-    <div><div class="eyebrow">START EXPLORING</div><h2>把 AI 变成你的<br><span class="gradient-text">下一种基础能力</span></h2></div>
-    <div><p>选择一个方向，开始构建更聪明、更高效的工作方式。</p><div class="cta-actions"><a href="/tools/" class="btn btn-primary">开始探索 <span>↗</span></a><a href="/about/" class="btn btn-secondary">认识我们</a></div></div>
+    <div><div class="eyebrow">START EXPLORING</div><h2>{{ '把 AI 变成你的' if current_lang == 'zh' else 'Make AI part of' }}<br><span class="gradient-text">{{ '下一种基础能力' if current_lang == 'zh' else 'your everyday skill set' }}</span></h2></div>
+    <div><p>{{ '选择一个方向，开始构建更聪明、更高效的工作方式。' if current_lang == 'zh' else 'Choose a direction and start building a smarter, more efficient way to work.' }}</p><div class="cta-actions"><a href="{{ lang_prefix }}/tools/" class="btn btn-primary">{{ '开始探索' if current_lang == 'zh' else 'Start exploring' }} <span>↗</span></a><a href="{{ lang_prefix }}/about/" class="btn btn-secondary">{{ '认识我们' if current_lang == 'zh' else 'About us' }}</a></div></div>
   </div>
 </section>
 {% endblock %}

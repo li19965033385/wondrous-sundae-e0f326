@@ -85,20 +85,19 @@
   <div class="container footer-grid">
     <div class="footer-section">
       <h3>🤖 {{ site_name }}</h3>
-      <p>{{ site_desc_cn }}</p>
-      <p>{{ site_desc }}</p>
+      <p>{{ site_desc_cn if current_lang == 'zh' else site_desc }}</p>
     </div>
     <div class="footer-section">
-      <h4 data-i18n="footer.quick_links">快速链接</h4>
+      <h4>{{ '快速链接' if current_lang == 'zh' else 'Quick links' }}</h4>
       <ul>
         <li><a href="{{ lang_prefix }}/">{{ '首页' if current_lang == 'zh' else 'Home' }}</a></li>
         <li><a href="{{ lang_prefix }}/tools/">{{ 'AI工具' if current_lang == 'zh' else 'AI Tools' }}</a></li>
         <li><a href="{{ lang_prefix }}/about/">{{ '关于我们' if current_lang == 'zh' else 'About us' }}</a></li>
-        <li><a href="/rss.xml" data-i18n="footer.rss">RSS订阅</a></li>
+        <li><a href="/rss.xml">{{ 'RSS订阅' if current_lang == 'zh' else 'RSS feed' }}</a></li>
       </ul>
     </div>
     <div class="footer-section">
-      <h4 data-i18n="footer.popular_cats">热门分类</h4>
+      <h4>{{ '热门分类' if current_lang == 'zh' else 'Popular categories' }}</h4>
       <ul>
         {% for cid, cat in categories.items() %}{% if loop.index <= 5 %}
         <li><a href="{{ lang_prefix }}/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn if current_lang == 'zh' else cat.name }}</a></li>
@@ -121,7 +120,7 @@
 <div class="search-overlay" id="searchOverlay">
   <div class="search-modal">
     <button class="search-close" id="searchClose">&times;</button>
-    <input type="text" class="search-input" id="searchInput" placeholder="搜索文章..." data-i18n="search.placeholder" autocomplete="off">
+    <input type="text" class="search-input" id="searchInput" placeholder="{{ '搜索文章…' if current_lang == 'zh' else 'Search articles…' }}" autocomplete="off">
     <div class="search-results" id="searchResults"></div>
   </div>
 </div>
