@@ -2,23 +2,32 @@
 {% block content %}
 <section class="page-header">
   <div class="container page-header-content">
-    <h1 data-zh="关于 {{ site_name }}" data-en="About {{ site_name }}">关于 {{ site_name }}</h1>
-    <p class="page-desc">{{ site_desc_cn }}</p>
+    <h1>{{ '关于 ' + site_name if current_lang == 'zh' else 'About ' + site_name }}</h1>
+    <p class="page-desc">{{ site_desc_cn if current_lang == 'zh' else site_desc }}</p>
   </div>
 </section>
 <section class="section">
   <div class="container content-page">
-    <h2 data-zh="我们的使命" data-en="Our mission">我们的使命</h2>
-    <p data-zh="{{ site_name }} 致力于为AI工具使用者提供全面、客观、高质量的评测、教程和资源指南。" data-en="{{ site_name }} provides comprehensive, objective and high-quality reviews, tutorials and resource guides for AI users.">{{ site_name }} 致力于为AI工具使用者提供全面、客观、高质量的评测、教程和资源指南。</p>
-    <h2 data-zh="我们做什么" data-en="What we do">我们做什么</h2>
+    <h2>{{ '我们的使命' if current_lang == 'zh' else 'Our mission' }}</h2>
+    <p>{{ site_name + ' 致力于通过清晰、实用的评测、教程和对比，帮助用户为真实任务选择合适的 AI 工具。' if current_lang == 'zh' else site_name + ' helps people choose the right AI tools for real work through clear, practical reviews, tutorials and comparisons.' }}</p>
+    <h2>{{ '我们的编辑方法' if current_lang == 'zh' else 'How we evaluate AI tools' }}</h2>
     <ul>
-      <li><strong>深度评测：</strong>对主流AI工具进行全面测试和对比分析</li>
-      <li><strong>实战教程：</strong>提供Step-by-step的AI工具使用教程</li>
-      <li><strong>行业趋势：</strong>追踪最新的AI技术发展和行业动态</li>
-      <li><strong>资源推荐：</strong>精选高质量的AI工具和学习资源</li>
+      {% if current_lang == 'zh' %}
+      <li><strong>真实任务：</strong>围绕写作、研究、设计、视频、编程与自动化等实际工作流评价工具。</li>
+      <li><strong>透明标准：</strong>比较功能、输出质量、易用性、价格、隐私和适用人群。</li>
+      <li><strong>持续更新：</strong>产品能力、价格或政策发生重大变化时更新重点内容。</li>
+      <li><strong>编辑独立：</strong>商业合作不会决定我们的结论或排名。</li>
+      {% else %}
+      <li><strong>Real tasks:</strong> We evaluate tools through practical writing, research, design, video, coding and automation workflows.</li>
+      <li><strong>Clear criteria:</strong> We compare capabilities, output quality, usability, pricing, privacy and audience fit.</li>
+      <li><strong>Meaningful updates:</strong> Priority content is revised when products, pricing or policies materially change.</li>
+      <li><strong>Editorial independence:</strong> Commercial relationships do not determine our conclusions or rankings.</li>
+      {% endif %}
     </ul>
-    <h2 data-zh="联系我们" data-en="Contact us">联系我们</h2>
-    <ul><li>📧 邮箱：contact@aitoolshub.com</li></ul>
+    <h2>{{ '纠错与透明度' if current_lang == 'zh' else 'Corrections and transparency' }}</h2>
+    <p>{{ '如果内容存在事实错误，我们会核实并修正。涉及赞助、联盟链接或厂商提供的测试权限时，页面会明确披露。' if current_lang == 'zh' else 'We review and correct factual errors. Sponsored relationships, affiliate links and vendor-provided access are disclosed where applicable.' }}</p>
+    <h2>{{ '联系我们' if current_lang == 'zh' else 'Contact us' }}</h2>
+    <p><a href="mailto:contact@luaitools.com">contact@luaitools.com</a></p>
   </div>
 </section>
 {% endblock %}

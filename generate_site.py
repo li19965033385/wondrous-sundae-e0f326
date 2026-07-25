@@ -14,8 +14,17 @@ except (ImportError, SyntaxError):
 from generator import SiteGenerator
 
 if __name__ == "__main__":
-    # Merge the editorial library and the bulk article archive. Keep the first
-    # occurrence so curated articles win when a generated slug overlaps.
-    articles = list({article["slug"]: article for article in reversed(ALL_ARTICLES + GENERATED_10000)}.values())
+    # Keep the bulk archive online for existing links, but distinguish it from
+    # human-edited content so low-value pages do not dilute search quality.
+    merged = {}
+    for article in GENERATED_10000:
+        item = dict(article)
+        item["programmatic"] = True
+        merged[item["slug"]] = item
+    for article in ALL_ARTICLES:
+        item = dict(article)
+        item["programmatic"] = False
+        merged[item["slug"]] = item
+    articles = list(merged.values())
     gen = SiteGenerator(articles, CATEGORIES)
     gen.generate_all()

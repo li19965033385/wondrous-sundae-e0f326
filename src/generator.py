@@ -74,8 +74,9 @@ class SiteGenerator:
             for article in self.articles:
                 article.update(translations.get(article.get("slug"), {}))
         self.categories = categories
-        self.tags = self._build_tag_index()
-        self.recent_articles = sorted(self.articles, key=lambda a: a["date"], reverse=True)
+        self.indexable_articles = [a for a in self.articles if not a.get("programmatic")]
+        self.tags = self._build_tag_index(self.indexable_articles)
+        self.recent_articles = sorted(self.indexable_articles, key=lambda a: a["date"], reverse=True)
         self.posts_per_page = 12
         self.env = Environment(loader=FileSystemLoader(str(TEMPLATES)))
         self.env.globals.update({
@@ -99,9 +100,9 @@ class SiteGenerator:
             "organization_ld": json.dumps(self.organization_ld(), ensure_ascii=False),
         })
 
-    def _build_tag_index(self):
+    def _build_tag_index(self, articles=None):
         tag_map = {}
-        for a in self.articles:
+        for a in articles if articles is not None else self.articles:
             for t in a.get("tags", []):
                 tag_map.setdefault(t, []).append(a)
         return tag_map
@@ -195,10 +196,10 @@ class SiteGenerator:
     # ── Page generators ──────────────────────────────────────────────
 
     def generate_homepage(self):
-        featured = [a for a in self.articles if a.get("featured")][:8]
+        featured = [a for a in self.indexable_articles if a.get("featured")][:8]
         categories_data = []
         for cid, cat in self.categories.items():
-            cat_arts = [a for a in self.articles if a.get("category") == cid]
+            cat_arts = [a for a in self.indexable_articles if a.get("category") == cid]
             categories_data.append({
                 "id": cid, "name": cat["name"], "name_cn": cat["name_cn"],
                 "description": cat.get("desc", ""), "icon": cat.get("icon", "🔧"),
@@ -228,7 +229,7 @@ class SiteGenerator:
             self._write("index.html" if lang == "en" else "zh/index.html", html)
 
     def generate_article(self, article):
-        related = [a for a in self.articles
+        related = [a for a in self.indexable_articles
                    if a.get("category") == article.get("category")
                    and a["slug"] != article["slug"]][:4]
         cid = article.get("category", "uncategorized")
@@ -249,13 +250,14 @@ class SiteGenerator:
                 breadcrumbs=json.dumps(localized_bread, ensure_ascii=False), ld_json=json.dumps(ld_all, ensure_ascii=False),
                 page_title=f"{article.get('title_cn', article['title']) if lang == 'zh' else article['title']} - {SITE_NAME}",
                 page_description=(article.get("description_cn", article.get("description", "")) if lang == "zh" else article.get("description", "")),
+                robots_directive=("noindex, follow" if article.get("programmatic") else "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"),
                 og_type="article", og_image=article.get("og_image", "/img/og-default.jpg"), **ctx)
             path = f"article/{article['slug']}/index.html" if lang == "en" else f"zh/article/{article['slug']}/index.html"
             self._write(path, html)
 
     def generate_category_pages(self):
         for cid, cat in self.categories.items():
-            cat_arts = [a for a in self.articles if a.get("category") == cid]
+            cat_arts = [a for a in self.indexable_articles if a.get("category") == cid]
             cat_arts.sort(key=lambda a: a["date"], reverse=True)
             crumbs = [("Home", "/"), (cat["name"], f"/category/{cid}/")]
             base_path = f"/category/{cid}/"
@@ -402,7 +404,7 @@ class SiteGenerator:
             SubElement(url, "priority").text = prio
             SubElement(url, "changefreq").text = freq
 
-        for a in self.articles:
+        for a in self.indexable_articles:
             for prefix in ("", "/zh"):
                 url = SubElement(urlset, "url")
                 SubElement(url, "loc").text = f"{SITE_URL}{prefix}/article/{a['slug']}/"
@@ -470,7 +472,7 @@ class SiteGenerator:
             SubElement(url, "priority").text = prio
             SubElement(url, "changefreq").text = freq
         
-        for a in self.articles[:5000]:
+        for a in self.indexable_articles[:5000]:
             url = SubElement(urlset, "url")
             SubElement(url, "loc").text = f"{SITE_URL}/article/{a['slug']}/"
             SubElement(url, "lastmod").text = a.get("date", "")
@@ -515,7 +517,7 @@ Sitemap: {SITE_URL}/sitemap_baidu.xml
 
     def generate_search_index(self):
         index = []
-        for a in self.articles:
+        for a in self.indexable_articles:
             body_text = strip_html(a.get("body", ""))
             index.append({
                 "title": a["title"], "title_cn": a.get("title_cn", a["title"]),
@@ -589,10 +591,10 @@ Sitemap: {SITE_URL}/sitemap_baidu.xml
         print("🔍 Search index...")
         self.generate_search_index()
         print("⚡ AMP...")
-        for a in self.articles:
+        for a in self.indexable_articles:
             self.generate_amp_article(a)
         print("🖼️  Generating article images...")
-        generate_all_article_images(self.articles, str(OUTPUT))
+        generate_all_article_images(self.indexable_articles, str(OUTPUT))
         generate_default_og(str(OUTPUT))
         
         print("📦 Static assets...")
@@ -602,4 +604,4 @@ Sitemap: {SITE_URL}/sitemap_baidu.xml
         html_files = [f for f in all_files if f.suffix == ".html"]
         total_size = sum(f.stat().st_size for f in all_files if f.is_file())
         print(f"\n✅ Done! {len(html_files)} HTML pages, {len(all_files)} files, {total_size/1024:.0f} KB")
-        print(f"   Articles: {len(self.articles)}, Categories: {len(self.categories)}, Tags: {len(self.tags)}")
+        print(f"   Articles: {len(self.articles)} total / {len(self.indexable_articles)} indexable, Categories: {len(self.categories)}, Tags: {len(self.tags)}")

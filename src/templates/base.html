@@ -106,12 +106,9 @@
       </ul>
     </div>
     <div class="footer-section">
-      <h4 data-zh="订阅更新" data-en="Subscribe">订阅更新</h4>
-      <p data-zh="获取最新AI工具评测和教程" data-en="Get the latest AI tool reviews and tutorials">获取最新AI工具评测和教程</p>
-      <div class="footer-newsletter">
-        <input type="email" placeholder="输入邮箱..." data-zh="输入邮箱..." data-en="Your email..." required>
-        <button data-zh="订阅" data-en="Subscribe">订阅</button>
-      </div>
+      <h4>{{ '持续关注' if current_lang == 'zh' else 'Stay informed' }}</h4>
+      <p>{{ '通过 RSS 获取最新 AI 工具评测、教程和行业更新。' if current_lang == 'zh' else 'Follow new AI tool reviews, tutorials and industry updates through our RSS feed.' }}</p>
+      <a class="btn btn-secondary" href="/rss.xml">{{ '订阅 RSS' if current_lang == 'zh' else 'Follow the RSS feed' }}</a>
     </div>
   </div>
   <div class="footer-bottom">
