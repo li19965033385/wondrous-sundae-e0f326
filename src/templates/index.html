@@ -2,14 +2,31 @@
 
 {% block extra_head %}
 <meta name="keywords" content="AI tools, artificial intelligence, ChatGPT, Midjourney, AI tutorial, AI guide, AI资源站">
+<style>
+.tools-preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+.tool-preview-card { text-align: center; padding: 24px 16px; cursor: pointer; }
+.tool-preview-card .tool-icon { font-size: 2.6em; display: block; margin-bottom: 10px; transition: transform 0.3s var(--ease-out); }
+.tool-preview-card:hover .tool-icon { transform: scale(1.15); }
+.tool-preview-card .tool-name { font-weight: 600; color: #fff; font-size: 0.88em; margin-bottom: 2px; }
+.tool-preview-card .tool-desc { font-size: 0.76em; color: rgba(255,255,255,0.45); }
+.cat-ai-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.cat-ai-card { text-decoration: none; }
+.latest-articles { display: flex; flex-direction: column; gap: 14px; }
+.section-ai-dark { background: var(--bg-alt); }
+</style>
 {% endblock %}
 
 {% block content %}
-<!-- ═══ AI Hero Section ═══ -->
+<!-- ═══ Hero ═══ -->
 <section class="hero-ai" id="hero">
+  <div class="hero-bg-gradient"></div>
+  <div class="hero-grid-bg"></div>
   <canvas id="heroCanvas"></canvas>
   <div class="hero-ai-content">
-    <div class="hero-ai-badge pulse" data-i18n="hero.badge">🚀 AI Tools Hub v2.0 — Your Ultimate AI Tools Guide</div>
+    <div class="hero-badge pulse">
+      <span class="live-dot"></span>
+      AI Tools Hub v3 — 您的AI工具终极指南
+    </div>
     <h1 class="hero-ai-title">
       <span class="gradient-text">{{ site_name }}</span><br>
       <span class="typing-container">
@@ -19,281 +36,222 @@
     </h1>
     <p class="hero-ai-subtitle" id="heroSubtitle">{{ site_desc }} — {{ site_desc_cn }}</p>
     <div class="hero-ai-actions">
-      <a href="#features" class="btn-ai-primary" data-i18n="hero.start">
-        🔍 Start Exploring
+      <a href="#features" class="btn btn-primary">
+        开始探索
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="/tools/" class="btn-ai-secondary" data-i18n="hero.tools">
-        ⚡ Online AI Tools
+      <a href="/tools/" class="btn btn-secondary">
+        ⚡ 在线AI工具
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       </a>
     </div>
     <div class="hero-stats">
       <div class="hero-stat-item">
-        <span class="hero-stat-number" data-target="{{ recent_articles|length }}">{{ recent_articles|length }}</span>
-        <span class="hero-stat-label" data-i18n="hero.stats.reviews">AI 工具评测</span>
+        <span class="hero-stat-number" data-target="50">50</span>
+        <span class="hero-stat-label">AI 工具评测</span>
       </div>
       <div class="hero-stat-item">
-        <span class="hero-stat-number">{{ cats|length }}</span>
-        <span class="hero-stat-label" data-i18n="hero.stats.categories">分类</span>
+        <span class="hero-stat-number">{{ categories|length }}</span>
+        <span class="hero-stat-label">分类</span>
       </div>
       <div class="hero-stat-item">
         <span class="hero-stat-number">{{ tags|length }}</span>
-        <span class="hero-stat-label" data-i18n="hero.stats.tags">标签</span>
+        <span class="hero-stat-label">标签</span>
       </div>
       <div class="hero-stat-item">
         <span class="hero-stat-number">{{ recent_articles|length }}</span>
-        <span class="hero-stat-label" data-i18n="hero.stats.tutorials">深度教程</span>
+        <span class="hero-stat-label">深度教程</span>
       </div>
     </div>
-    <div class="trust-bar">
-      <span data-i18n="hero.trust.updated">💎 持续更新</span>
-      <span data-i18n="hero.trust.seo">🔒 SEO优化</span>
-      <span data-i18n="hero.trust.bilingual">🌍 中英双语</span>
-      <span data-i18n="hero.trust.data">📊 数据驱动</span>
+    <div class="hero-trust-bar">
+      <span>💎 持续更新</span>
+      <span>🔒 SEO优化</span>
+      <span>🌍 中英双语</span>
+      <span>📊 数据驱动</span>
     </div>
   </div>
 </section>
 
-<!-- ═══ Features Section ═══ -->
-<section class="section-ai section-ai-dark" id="features">
+<!-- ═══ Features ═══ -->
+<section class="section section-dark bg-grid" id="features">
   <div class="container">
-    <div class="section-header-ai section-header-ai-dark fade-in-up">
-      <h2 data-i18n="features.title">🤖 为什么选择 AI Tools Hub</h2>
-      <p data-i18n="features.desc">我们为你精选最实用的AI工具，提供深度评测与实战教程</p>
+    <div class="section-header fade-in">
+      <h2>🤖 为什么选择 AI Tools Hub</h2>
+      <p>我们为你精选最实用的AI工具，提供深度评测与实战教程</p>
     </div>
     <div class="features-grid">
-      <div class="glass-card fade-in-up">
-        <span class="glass-card-icon">🎯</span>
-        <h3 data-i18n="features.reviews">深度评测</h3>
-        <p data-i18n="features.reviews.desc">每款AI工具都经过实际测试，从功能、定价、性能多维度评估</p>
+      <div class="feature-card fade-in stagger-1">
+        <span class="feature-card-icon">🎯</span>
+        <h3>深度评测</h3>
+        <p>每款AI工具都经过实际测试，从功能、定价、性能多维度评估</p>
       </div>
-      <div class="glass-card fade-in-up">
-        <span class="glass-card-icon">📚</span>
-        <h3 data-i18n="features.tutorials">实战教程</h3>
+      <div class="feature-card fade-in stagger-2">
+        <span class="feature-card-icon">📚</span>
+        <h3>实战教程</h3>
         <p>从入门到精通，step-by-step 教程帮你快速掌握AI工具</p>
       </div>
-      <div class="glass-card fade-in-up">
-        <span class="glass-card-icon">⚡</span>
-        <h3 data-i18n="features.tools">在线AI工具</h3>
+      <div class="feature-card fade-in stagger-3">
+        <span class="feature-card-icon">⚡</span>
+        <h3>在线AI工具</h3>
         <p>免费在线使用AI图片处理、调色板提取等实用工具</p>
       </div>
-      <div class="glass-card fade-in-up">
-        <span class="glass-card-icon">🔄</span>
-        <h3 data-i18n="features.updates">持续更新</h3>
+      <div class="feature-card fade-in stagger-4">
+        <span class="feature-card-icon">🔄</span>
+        <h3>持续更新</h3>
         <p>紧跟AI行业最新动态，每日更新新工具和教程</p>
       </div>
-      <div class="glass-card fade-in-up">
-        <span class="glass-card-icon">🔬</span>
-        <h3 data-i18n="features.compare">横向对比</h3>
+      <div class="feature-card fade-in stagger-5">
+        <span class="feature-card-icon">🔬</span>
+        <h3>横向对比</h3>
         <p>同类AI工具详细对比，帮你选择最适合的工具</p>
       </div>
-      <div class="glass-card fade-in-up">
-        <span class="glass-card-icon">🌐</span>
-        <h3 data-i18n="features.bilingual">中英双语</h3>
+      <div class="feature-card fade-in stagger-6">
+        <span class="feature-card-icon">🌐</span>
+        <h3>中英双语</h3>
         <p>所有内容支持中英文，服务全球中文和英文用户</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══ Ad Banner ═══ -->
-<section class="section-ai" style="padding:24px 0">
+<!-- ═══ Quick Tools ═══ -->
+<section class="section">
   <div class="container">
-    <div class="glass-card" style="padding:16px;text-align:center">
-      <ins class="adsbygoogle"
-           style="display:block;min-height:90px"
-           data-ad-client="ca-pub-7089877911189758"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-  </div>
-</section>
-<!-- ═══ Quick AI Tools ═══ -->
-<section class="section-ai">
-  <div class="container">
-    <div class="section-header-ai fade-in-up">
-      <h2 data-i18n="tools.title">⚡ 在线AI工具箱</h2>
-      <p data-i18n="tools.desc">免费使用我们的在线AI工具，无需注册</p>
+    <div class="section-header fade-in">
+      <h2>⚡ 在线AI工具箱</h2>
+      <p>免费使用我们的在线AI工具，无需注册</p>
     </div>
     <div class="tools-preview-grid">
-      <a href="/tools/#image-filter" class="tool-preview-card glass-card fade-in-up" style="text-decoration:none">
+      <a href="/tools/#image-filter" class="tool-preview-card card fade-in stagger-1" style="text-decoration:none;display:block;padding:24px 16px;text-align:center">
         <span class="tool-icon">🎨</span>
-        <div class="tool-name">AI图片滤镜</div>
-        <div class="tool-desc">在线图片滤镜与特效</div>
+        <div class="tool-name" style="color:var(--text);font-weight:600;font-size:0.9em">AI图片滤镜</div>
+        <div style="font-size:0.76em;color:var(--text-muted);margin-top:4px">在线图片滤镜与特效</div>
       </a>
-      <a href="/tools/#palette" class="tool-preview-card glass-card fade-in-up" style="text-decoration:none">
+      <a href="/tools/#palette" class="tool-preview-card card fade-in stagger-2" style="text-decoration:none;display:block;padding:24px 16px;text-align:center">
         <span class="tool-icon">🌈</span>
-        <div class="tool-name">颜色提取器</div>
-        <div class="tool-desc">从图片提取配色方案</div>
+        <div class="tool-name" style="color:var(--text);font-weight:600;font-size:0.9em">颜色提取器</div>
+        <div style="font-size:0.76em;color:var(--text-muted);margin-top:4px">从图片提取配色方案</div>
       </a>
-      <a href="/tools/#qr" class="tool-preview-card glass-card fade-in-up" style="text-decoration:none">
+      <a href="/tools/#qr" class="tool-preview-card card fade-in stagger-3" style="text-decoration:none;display:block;padding:24px 16px;text-align:center">
         <span class="tool-icon">📱</span>
-        <div class="tool-name">QR码生成器</div>
-        <div class="tool-desc">快速生成二维码</div>
+        <div class="tool-name" style="color:var(--text);font-weight:600;font-size:0.9em">QR码生成器</div>
+        <div style="font-size:0.76em;color:var(--text-muted);margin-top:4px">快速生成二维码</div>
       </a>
-      <a href="/tools/#prompt" class="tool-preview-card glass-card fade-in-up" style="text-decoration:none">
+      <a href="/tools/#prompt" class="tool-preview-card card fade-in stagger-4" style="text-decoration:none;display:block;padding:24px 16px;text-align:center">
         <span class="tool-icon">💬</span>
-        <div class="tool-name">Prompt构建器</div>
-        <div class="tool-desc">AI提示词模板工具</div>
+        <div class="tool-name" style="color:var(--text);font-weight:600;font-size:0.9em">Prompt构建器</div>
+        <div style="font-size:0.76em;color:var(--text-muted);margin-top:4px">AI提示词模板工具</div>
       </a>
-      <a href="/tools/#bg-remove" class="tool-preview-card glass-card fade-in-up" style="text-decoration:none">
+      <a href="/tools/#bg-remove" class="tool-preview-card card fade-in stagger-5" style="text-decoration:none;display:block;padding:24px 16px;text-align:center">
         <span class="tool-icon">✂️</span>
-        <div class="tool-name">背景去除</div>
-        <div class="tool-desc">在线图片背景去除</div>
+        <div class="tool-name" style="color:var(--text);font-weight:600;font-size:0.9em">背景去除</div>
+        <div style="font-size:0.76em;color:var(--text-muted);margin-top:4px">在线图片背景去除</div>
       </a>
-      <a href="/tools/#tts" class="tool-preview-card glass-card fade-in-up" style="text-decoration:none">
+      <a href="/tools/#tts" class="tool-preview-card card fade-in stagger-6" style="text-decoration:none;display:block;padding:24px 16px;text-align:center">
         <span class="tool-icon">🔊</span>
-        <div class="tool-name">文字转语音</div>
-        <div class="tool-desc">AI语音合成演示</div>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ═══ Video Section ═══ -->
-<section class="section-ai">
-  <div class="container">
-    <div class="section-header-ai fade-in-up">
-      <h2 data-i18n="videos.title">🎬 AI工具视频教程</h2>
-      <p data-i18n="videos.desc">精选AI工具使用教程，边看边学</p>
-    </div>
-    <div class="features-grid">
-      <div class="glass-card fade-in-up" style="cursor:pointer;text-align:center">
-        <span class="glass-card-icon" style="font-size:3em">🤖</span>
-        <h3>ChatGPT完整教程</h3>
-        <p style="font-size:0.82em;color:rgba(255,255,255,0.5);margin-top:8px">从入门到精通</p>
-      </div>
-      <div class="glass-card fade-in-up" style="cursor:pointer;text-align:center">
-        <span class="glass-card-icon" style="font-size:3em">🎨</span>
-        <h3>Midjourney v7指南</h3>
-        <p style="font-size:0.82em;color:rgba(255,255,255,0.5);margin-top:8px">AI艺术创作</p>
-      </div>
-      <div class="glass-card fade-in-up" style="cursor:pointer;text-align:center">
-        <span class="glass-card-icon" style="font-size:3em">🎬</span>
-        <h3>Runway Gen-3教程</h3>
-        <p style="font-size:0.82em;color:rgba(255,255,255,0.5);margin-top:8px">AI视频制作</p>
-      </div>
-      <div class="glass-card fade-in-up" style="cursor:pointer;text-align:center">
-        <span class="glass-card-icon" style="font-size:3em">💻</span>
-        <h3>GitHub Copilot实践</h3>
-        <p style="font-size:0.82em;color:rgba(255,255,255,0.5);margin-top:8px">AI编程技巧</p>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:24px">
-      <a href="/videos/" class="btn-ai-primary" style="display:inline-flex;padding:12px 28px">
-        data-i18n="videos.view_all">浏览全部视频教程 →
+        <div class="tool-name" style="color:var(--text);font-weight:600;font-size:0.9em">文字转语音</div>
+        <div style="font-size:0.76em;color:var(--text-muted);margin-top:4px">AI语音合成演示</div>
       </a>
     </div>
   </div>
 </section>
 
 <!-- ═══ Categories ═══ -->
-<section class="section-ai section-ai-dark">
+<section class="section section-dark bg-grid">
   <div class="container">
-    <div class="section-header-ai section-header-ai-dark fade-in-up">
+    <div class="section-header fade-in">
       <h2 data-i18n="categories.title">📂 浏览分类</h2>
       <p data-i18n="categories.desc">按类别探索AI工具评测与教程</p>
     </div>
-    <div class="cat-ai-grid">
+    <div class="categories-grid">
       {% for cat in cats %}
-      <a href="/category/{{ cat.id }}/" class="cat-ai-card glass-card fade-in-up" style="text-decoration:none">
-        <span class="cat-icon">{{ cat.icon }}</span>
+      <a href="/category/{{ cat.id }}/" class="category-card fade-in stagger-{{ loop.index }}">
+        <span class="category-icon">{{ cat.icon }}</span>
         <h3>{{ cat.name_cn }}</h3>
         <p>{{ cat.description }}</p>
-        <span class="cat-count">{{ cat.count }} 篇文章 →</span>
+        <span class="category-count">{{ cat.count }} 篇文章 →</span>
       </a>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<!-- ═══ Ad Banner ═══ -->
-<section class="section-ai" style="padding:16px 0">
-  <div class="container">
-    <div class="glass-card" style="padding:16px;text-align:center">
-      <ins class="adsbygoogle"
-           style="display:block;min-height:90px"
-           data-ad-client="ca-pub-7089877911189758"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-  </div>
-</section>
 <!-- ═══ Featured + Latest ═══ -->
-<section class="section-ai">
+<section class="section">
   <div class="container">
-    <div class="section-header-ai fade-in-up">
-      <h2 data-i18n="featured.title">🔥 精选内容</h2>
-      <p data-i18n="featured.desc">最受欢迎的AI工具深度评测</p>
+    <div class="section-header fade-in">
+      <h2>🔥 精选内容</h2>
+      <p>最受欢迎的AI工具深度评测</p>
     </div>
     <div class="home-two-col">
-      <div class="latest-articles">
-        {% for article in featured %}
-        <article class="article-card fade-in-up">
-          <div class="article-card-content">
-            <div class="article-meta">
-              <span class="card-category">{{ categories[article.category].icon }} {{ categories[article.category].name_cn }}</span>
-              <span>{{ article.date }}</span>
+      <div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          {% for article in featured %}
+          <article class="article-card fade-in stagger-{{ loop.index }}">
+            <div class="article-card-content">
+              <div class="article-meta">
+                <span class="article-category">{{ categories[article.category].icon }} {{ categories[article.category].name_cn }}</span>
+                <span>{{ article.date }}</span>
+              </div>
+              <h3><a href="/article/{{ article.slug }}/">{{ article.title }}</a></h3>
+              <p>{{ article.description }}</p>
             </div>
-            <h3><a href="/article/{{ article.slug }}/">{{ article.title }}</a></h3>
-            <p>{{ article.description }}</p>
-          </div>
-        </article>
-        {% endfor %}
-      </div>
-      <div class="latest-articles">
-        <div class="section-header-ai" style="margin-bottom:24px">
-          <h2 style="font-size:1.3em" data-i18n="latest.title">📰 最新文章</h2>
+          </article>
+          {% endfor %}
         </div>
-        {% for article in recent_articles[:12] %}
-        <article class="article-card fade-in-up" style="padding:14px 18px">
-          <div class="article-card-content">
-            <div class="article-meta">
-              <span>{{ categories[article.category].icon }}</span>
-              <span>{{ article.date }}</span>
+      </div>
+      <div>
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:1.2em">📰 最新文章</h3>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          {% for article in recent_articles[:12] %}
+          <article class="article-card fade-in stagger-{{ loop.index }}" style="padding:14px 16px">
+            <div class="article-card-content">
+              <div class="article-meta">
+                <span>{{ categories[article.category].icon }}</span>
+                <span>{{ article.date }}</span>
+              </div>
+              <h3 style="font-size:0.92em"><a href="/article/{{ article.slug }}/">{{ article.title }}</a></h3>
             </div>
-            <h3 style="font-size:0.92em"><a href="/article/{{ article.slug }}/">{{ article.title }}</a></h3>
-          </div>
-        </article>
-        {% endfor %}
-        <a href="/category/ai-chatbots/" class="btn-ai-primary" style="display:inline-flex;align-self:flex-start;padding:10px 24px;font-size:0.9em;margin-top:8px">
-          data-i18n="latest.view_all">浏览全部文章 →
-        </a>
+          </article>
+          {% endfor %}
+          <a href="/category/ai-chatbots/" class="btn btn-primary" style="align-self:flex-start;padding:8px 20px;font-size:0.85em;margin-top:8px">
+            浏览全部文章 →
+          </a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ═══ Tags ═══ -->
-<section class="section-ai section-ai-dark">
+<section class="section section-dark bg-grid">
   <div class="container">
-    <div class="section-header-ai section-header-ai-dark fade-in-up">
-      <h2 data-i18n="tags.title">🏷️ 热门标签</h2>
-      <p data-i18n="tags.desc">按标签浏览AI工具内容</p>
+    <div class="section-header fade-in">
+      <h2>🏷️ 热门标签</h2>
+      <p>按标签浏览AI工具内容</p>
     </div>
-    <div class="tag-cloud" style="justify-content:center;gap:10px;max-width:800px;margin:0 auto">
-      {% for tag in tags[:30] %}
-      <a href="/tag/{{ slugify(tag) }}/" class="tag" style="font-size:0.9em;padding:8px 16px;background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.12)">{{ tag }}</a>
+    <div class="tags-cloud" style="max-width:720px;margin:0 auto">
+      {% for tag in tags[:40] %}
+      <a href="/tag/{{ slugify(tag) }}/" class="tag fade-in stagger-{{ loop.index if loop.index <= 8 else 1 }}" style="font-size:0.85em;padding:6px 14px">{{ tag }}</a>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<!-- ═══ CTA Section ═══ -->
-<section class="cta-ai-section">
-  <div class="cta-ai-content fade-in-up">
-    <h2 data-i18n="cta.title">🚀 准备好探索AI世界了吗?</h2>
-    <p data-i18n="cta.desc">浏览我们的AI工具库，从ChatGPT到Midjourney，从视频生成到代码编程，一应俱全</p>
-    <div class="hero-ai-actions">
-      <a href="/about/" class="btn-ai-primary">
-        data-i18n="cta.learn">了解更多
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+  <div class="cta-content fade-in">
+    <h2>🚀 准备好探索AI世界了吗?</h2>
+    <p>浏览我们的AI工具库，从ChatGPT到Midjourney，从视频生成到代码编程，一应俱全</p>
+    <div class="cta-actions">
+      <a href="/about/" class="btn btn-primary">
+        了解更多
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="/rss.xml" class="btn-ai-secondary">
-        data-i18n="cta.rss">📡 订阅RSS
+      <a href="/rss.xml" class="btn btn-secondary" style="color:#fff;border-color:rgba(255,255,255,0.2)">
+        📡 订阅RSS
       </a>
     </div>
   </div>
@@ -302,49 +260,37 @@
 
 {% block extra_scripts %}
 <script>
-/* ═══ Hero Canvas Particle Network ═══ */
 (function() {
   const canvas = document.getElementById('heroCanvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   let W, H, particles = [], mouse = {x: null, y: null};
-  const COUNT = 100;
-  const COLORS = ['rgba(99,102,241,', 'rgba(6,182,212,', 'rgba(168,85,247,'];
-
+  const COUNT = 90;
+  const COLORS = ['rgba(99,102,241,', 'rgba(34,211,238,', 'rgba(168,85,247,'];
   function resize() {
     const hero = document.getElementById('hero');
     W = canvas.width = hero.offsetWidth;
     H = canvas.height = hero.offsetHeight;
   }
-
   class Particle {
-    constructor() {
-      this.reset();
-    }
+    constructor() { this.reset(); }
     reset() {
       this.x = Math.random() * W;
       this.y = Math.random() * H;
-      this.vx = (Math.random() - 0.5) * 0.8;
-      this.vy = (Math.random() - 0.5) * 0.8;
-      this.radius = Math.random() * 2 + 1;
+      this.vx = (Math.random() - 0.5) * 0.6;
+      this.vy = (Math.random() - 0.5) * 0.6;
+      this.radius = Math.random() * 2.5 + 1;
       this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
     }
     update() {
-      this.x += this.vx;
-      this.y += this.vy;
+      this.x += this.vx; this.y += this.vy;
       if (this.x < 0 || this.x > W) this.vx *= -1;
       if (this.y < 0 || this.y > H) this.vy *= -1;
       if (mouse.x && mouse.y) {
-        const dx = mouse.x - this.x;
-        const dy = mouse.y - this.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 150) {
-          this.vx -= dx * 0.0003;
-          this.vy -= dy * 0.0003;
-        }
+        const dx = mouse.x - this.x, dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 150) { this.vx -= dx * 0.0003; this.vy -= dy * 0.0003; }
       }
-      const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
-      if (speed > 2) { this.vx *= 0.95; this.vy *= 0.95; }
     }
     draw() {
       ctx.beginPath();
@@ -353,38 +299,29 @@
       ctx.fill();
     }
   }
-
-  function init() {
-    resize();
-    particles = [];
-    for (let i = 0; i < COUNT; i++) particles.push(new Particle());
-  }
-
+  function init() { resize(); particles = []; for (let i = 0; i < COUNT; i++) particles.push(new Particle()); }
   function drawLines() {
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 180) {
+        const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 160) {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(99,102,241,${0.12 * (1 - dist / 180)})`;
+          ctx.strokeStyle = `rgba(99,102,241,${0.1 * (1 - dist / 160)})`;
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
       }
     }
   }
-
   function animate() {
     ctx.clearRect(0, 0, W, H);
     particles.forEach(p => { p.update(); p.draw(); });
     drawLines();
     requestAnimationFrame(animate);
   }
-
   canvas.addEventListener('mousemove', e => {
     const rect = canvas.getBoundingClientRect();
     mouse.x = e.clientX - rect.left;
@@ -395,13 +332,11 @@
   init(); animate();
 })();
 
-/* ═══ Typing Effect ═══ */
 (function() {
   const el = document.getElementById('typingText');
   if (!el) return;
-  const texts = ['探索AI的无限可能', '发现最佳AI工具', '掌握AI技能', '开启智能未来'];
+  const texts = ['探索AI的无限可能', '发现最佳AI工具', '掌握前沿AI技能', '开启智能未来'];
   let idx = 0, charIdx = 0, isDeleting = false;
-
   function type() {
     const current = texts[idx];
     if (!isDeleting) {
@@ -418,13 +353,13 @@
   type();
 })();
 
-/* ═══ Scroll Animation ═══ */
 (function() {
-  const els = document.querySelectorAll('.fade-in-up');
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-  }, { threshold: 0.1 });
-  els.forEach(el => observer.observe(el));
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in, .fade-in-left, .fade-in-right, .fade-in-scale').forEach(el => observer.observe(el));
 })();
 </script>
 {% endblock %}

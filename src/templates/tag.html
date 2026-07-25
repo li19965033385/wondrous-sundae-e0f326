@@ -3,7 +3,7 @@
 {% block content %}
 <section class="page-header">
   <div class="container">
-    <div class="page-header-content">
+    <div class="page-header-content fade-in">
       <h1>🏷️ {{ tag }}</h1>
       <p class="page-desc">所有标记为"{{ tag }}"的文章</p>
       <span class="page-count">{{ total }} 篇文章</span>
@@ -15,9 +15,9 @@
   <div class="container">
     <div class="archive-list">
       {% for article in articles %}
-      <article class="archive-item">
+      <article class="archive-item fade-in stagger-{{ loop.index if loop.index <= 6 else 6 }}">
         <div class="archive-meta">
-          <a href="/category/{{ article.category }}/" class="archive-cat">{{ categories[article.category].icon }} {{ categories[article.category].name_cn }}</a>
+          <a href="/category/{{ article.category }}/" class="archive-category">{{ categories[article.category].icon }} {{ categories[article.category].name_cn }}</a>
           <span class="archive-date">{{ article.date }}</span>
         </div>
         <h2 class="archive-title"><a href="/article/{{ article.slug }}/">{{ article.title_cn|default(article.title) }}</a></h2>

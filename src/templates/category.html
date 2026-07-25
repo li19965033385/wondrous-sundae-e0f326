@@ -3,7 +3,7 @@
 {% block content %}
 <section class="page-header">
   <div class="container">
-    <div class="page-header-content">
+    <div class="page-header-content fade-in">
       <span class="page-icon">{{ category.icon }}</span>
       <h1>{{ category.name_cn }}</h1>
       <p class="page-desc">{{ category.desc }}</p>
@@ -14,15 +14,14 @@
 
 <section class="section">
   <div class="container">
-    <!-- Category Ad -->
     <div class="ad-container">
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE" data-ad-slot="YOUR_AD_SLOT_HERE" data-ad-format="auto"></ins>
+      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7089877911189758" data-ad-slot="YOUR_AD_SLOT_HERE" data-ad-format="auto"></ins>
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
 
     <div class="archive-list">
       {% for article in articles %}
-      <article class="archive-item">
+      <article class="archive-item fade-in stagger-{{ loop.index if loop.index <= 6 else 6 }}">
         <div class="archive-meta">
           <span class="archive-date">{{ article.date }}</span>
           <span class="archive-read">{{ article.read_time|default(10) }} 分钟</span>

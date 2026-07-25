@@ -1,14 +1,17 @@
 {% extends "base.html" %}
 
+{% block extra_head %}
+<meta name="keywords" content="AI, {{ article.title }}, AI tools, {{ article.tags|join(', ') }}">
+{% endblock %}
+
 {% block content %}
 <article class="article-page">
   <div class="container">
     <div class="article-layout">
-      <!-- Main Content -->
       <div class="article-main">
         <header class="article-header">
           <div class="article-meta-top">
-            <a href="/category/{{ article.category }}/" class="article-category">
+            <a href="/category/{{ article.category }}/" class="article-category-link">
               {{ categories[article.category].icon }} {{ categories[article.category].name_cn }}
             </a>
             <time datetime="{{ article.date }}">{{ article.date }}</time>
@@ -23,49 +26,36 @@
           </div>
         </header>
 
-        <!-- Article Ad Top -->
         <div class="ad-in-article">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE"
-               data-ad-slot="YOUR_AD_SLOT_HERE"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
+          <ins class="adsbygoogle" style="display:block;min-height:90px" data-ad-client="ca-pub-7089877911189758" data-ad-format="auto" data-full-width-responsive="true"></ins>
           <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-        <!-- Article Body -->
         <div class="article-body">
           {{ article.body|safe }}
         </div>
 
-        <!-- Article Ad Bottom -->
         <div class="ad-in-article">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE"
-               data-ad-slot="YOUR_AD_SLOT_HERE"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
+          <ins class="adsbygoogle" style="display:block;min-height:90px" data-ad-client="ca-pub-7089877911189758" data-ad-format="auto" data-full-width-responsive="true"></ins>
           <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-        <!-- Share -->
-        <div class="article-share">
-          <span>分享本文：</span>
-          <a href="https://twitter.com/intent/tweet?text={{ article.title }}&url={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener">Twitter</a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener">Facebook</a>
-          <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ site_url }}/article/{{ article.slug }}/&title={{ article.title }}" target="_blank" rel="noopener">LinkedIn</a>
+        <div class="social-share">
+          <span class="social-share-label">📤 分享:</span>
+          <a href="https://twitter.com/intent/tweet?text={{ article.title|urlencode }}&url={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener" class="social-btn" style="background:#000;">𝕏 Twitter</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener" class="social-btn" style="background:#1877f2;">📘 Facebook</a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener" class="social-btn" style="background:#0a66c2;">💼 LinkedIn</a>
+          <a href="https://api.whatsapp.com/send?text={{ article.title }} {{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener" class="social-btn" style="background:#25d366;">💬 WhatsApp</a>
+          <button onclick="navigator.clipboard.writeText('{{ site_url }}/article/{{ article.slug }}/').then(()=>{this.textContent='✅ 已复制!'});setTimeout(()=>{this.textContent='🔗 复制链接'},2000)" class="social-btn" style="background:var(--primary);border:none;cursor:pointer">🔗 复制链接</button>
         </div>
 
-        <!-- Related Articles -->
         {% if related %}
         <section class="related-articles">
           <h2>📌 相关文章</h2>
           <div class="related-grid">
             {% for r in related %}
             <a href="/article/{{ r.slug }}/" class="related-card">
-              <span class="related-cat">{{ categories[r.category].icon }}</span>
+              <span class="related-icon">{{ categories[r.category].icon }}</span>
               <h3>{{ r.title_cn|default(r.title) }}</h3>
               <p>{{ r.description_cn|default(r.description)|truncate(80) }}</p>
               <span class="related-date">{{ r.date }}</span>
@@ -76,30 +66,23 @@
         {% endif %}
       </div>
 
-      <!-- Sidebar -->
       <aside class="article-sidebar">
-        <!-- Sidebar Ad -->
         <div class="ad-sidebar">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE"
-               data-ad-slot="YOUR_AD_SLOT_HERE"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
+          <ins class="adsbygoogle" style="display:block;min-height:250px" data-ad-client="ca-pub-7089877911189758" data-ad-format="auto" data-full-width-responsive="true"></ins>
           <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-        <!-- Table of Contents -->
-        <div class="sidebar-widget toc-widget" id="toc">
+        {% if article.toc %}
+        <div class="sidebar-widget toc-widget">
           <h3>📑 目录</h3>
-          <ul id="tocList"></ul>
+          <div id="tocList"></div>
         </div>
+        {% endif %}
 
-        <!-- Recent Posts -->
         <div class="sidebar-widget">
-          <h3>📝 最新文章</h3>
+          <h3>📰 最新文章</h3>
           <ul class="sidebar-post-list">
-            {% for a in recent_articles[:5] %}
+            {% for a in recent_articles[:6] %}
             <li>
               <a href="/article/{{ a.slug }}/">{{ a.title_cn|default(a.title) }}</a>
               <span class="sidebar-post-date">{{ a.date }}</span>
@@ -108,64 +91,43 @@
           </ul>
         </div>
 
-        <!-- Categories -->
-        <div class="sidebar-widget">
-          <h3>📂 分类</h3>
-          <ul class="sidebar-cat-list">
-            {% for cid, cat in categories.items() %}
-            <li>
-              <a href="/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn }}</a>
-            </li>
-            {% endfor %}
-          </ul>
+        <div class="ad-sidebar">
+          <ins class="adsbygoogle" style="display:block;min-height:250px" data-ad-client="ca-pub-7089877911189758" data-ad-format="auto" data-full-width-responsive="true"></ins>
+          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
 
-        <!-- Tags -->
         <div class="sidebar-widget">
-          <h3>🏷️ 标签</h3>
+          <h3>🏷️ 热门标签</h3>
           <div class="sidebar-tags">
             {% for tag in tags[:20] %}
-            <a href="/tag/{{ slugify(tag) }}/" class="tag-sm">{{ tag }}</a>
+            <a href="/tag/{{ slugify(tag) }}/" class="tag tag-sm">{{ tag }}</a>
             {% endfor %}
           </div>
-        </div>
-
-        <!-- Sidebar Ad 2 -->
-        <div class="ad-sidebar">
-          <ins class="adsbygoogle"
-               style="display:block"
-               data-ad-client="ca-pub-YOUR_PUBLISHER_ID_HERE"
-               data-ad-slot="YOUR_AD_SLOT_HERE"
-               data-ad-format="auto"
-               data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
         </div>
       </aside>
     </div>
   </div>
 </article>
+{% endblock %}
 
 {% block extra_scripts %}
+{% if article.toc %}
 <script>
-// Generate table of contents from article headings
-document.addEventListener('DOMContentLoaded', function() {
-  const body = document.querySelector('.article-body');
-  const tocList = document.getElementById('tocList');
-  if (body && tocList) {
-    const headings = body.querySelectorAll('h2, h3');
-    headings.forEach(function(h, i) {
-      const id = 'section-' + i;
-      h.setAttribute('id', id);
-      const li = document.createElement('li');
-      li.className = h.tagName === 'H2' ? 'toc-h2' : 'toc-h3';
-      const a = document.createElement('a');
-      a.href = '#' + id;
-      a.textContent = h.textContent;
-      li.appendChild(a);
-      tocList.appendChild(li);
-    });
-  }
-});
+(function() {
+  const headings = document.querySelectorAll('.article-body h2, .article-body h3');
+  const toc = document.getElementById('tocList');
+  if (!toc || headings.length < 2) return;
+  headings.forEach((h, i) => {
+    if (!h.id) h.id = 'heading-' + i;
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#' + h.id;
+    a.textContent = h.textContent;
+    if (h.tagName === 'H3') a.classList.add('toc-h3');
+    li.appendChild(a);
+    toc.appendChild(li);
+  });
+})();
 </script>
-{% endblock %}
+{% endif %}
 {% endblock %}
