@@ -1,15 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="page-header directory-hero">
-  <div class="container page-header-content">
-    <span class="eyebrow">CURATED AI ECOSYSTEM</span>
-    <h1>{{ 'AI 工具目录' if current_lang == 'zh' else 'AI Directory' }}</h1>
-    <p class="page-desc">{{ '发现、比较并选择适合你的优质 AI 产品。' if current_lang == 'zh' else 'Discover, compare and choose the right AI products for your workflow.' }}</p>
-    <span class="page-count">{{ tools|length }} {{ '款精选工具' if current_lang == 'zh' else 'curated tools' }}</span>
+<section class="directory-hero">
+  <div class="container directory-hero-inner">
+    <div class="directory-brand-mark"><span>AI</span><small>TOOLS<br>DIRECTORY</small></div>
+    <div class="directory-hero-copy">
+      <h1>{{ 'AI 工具目录' if current_lang == 'zh' else 'AI Tools Directory' }}</h1>
+      <p>{{ '精选全球优秀 AI 工具，发现更聪明的工作方式' if current_lang == 'zh' else "The world's best curated list of AI tools" }}</p>
+    </div>
+    <a href="#directoryGrid" class="directory-hero-button">{{ '浏览工具' if current_lang == 'zh' else 'Browse Tools' }}</a>
   </div>
 </section>
 <section class="section directory-section">
   <div class="container">
+    <div class="directory-featured">
+      {% for tool in tools[:2] %}
+      <a href="{{ tool.url }}" target="_blank" rel="noopener nofollow" class="directory-featured-card">
+        <span>{{ '精选工具' if current_lang == 'zh' else 'Featured Tool' }}: <b>{{ tool.name }}</b></span>
+        <div><i>{{ tool.name[:2]|upper }}</i><p>{{ tool.description_zh if current_lang == 'zh' else tool.description }}</p><strong>↗</strong></div>
+      </a>
+      {% endfor %}
+    </div>
     <div class="directory-controls">
       <div class="directory-search"><span>⌕</span><input id="directorySearch" type="search" placeholder="{{ '搜索 AI 工具…' if current_lang == 'zh' else 'Search AI tools…' }}"></div>
       <div class="directory-filters" id="directoryFilters">
@@ -20,9 +30,9 @@
     <div class="directory-grid" id="directoryGrid">
       {% for tool in tools %}
       <article class="directory-card" data-category="{{ tool.category }}" data-search="{{ tool.name|lower }} {{ tool.description|lower }} {{ tool.description_zh }}">
-        <div class="directory-card-top"><span class="directory-logo">{{ tool.name[:2]|upper }}</span><span class="directory-price {{ tool.price|lower }}">{{ tool.price_zh if current_lang == 'zh' else tool.price }}</span></div>
-        <div><span class="directory-category">{{ tool.category_name_zh if current_lang == 'zh' else tool.category_name }}</span><h2>{{ tool.name }}</h2><p>{{ tool.description_zh if current_lang == 'zh' else tool.description }}</p></div>
-        <a href="{{ tool.url }}" target="_blank" rel="noopener nofollow">{{ '访问工具' if current_lang == 'zh' else 'Visit tool' }} <span>↗</span></a>
+        <div class="directory-logo">{{ tool.name[:2]|upper }}</div>
+        <div class="directory-card-content"><h2>{{ tool.name }}</h2><div class="directory-tags"><span>{{ tool.category_name_zh if current_lang == 'zh' else tool.category_name }}</span><span>{{ tool.price_zh if current_lang == 'zh' else tool.price }}</span></div><p>{{ tool.description_zh if current_lang == 'zh' else tool.description }}</p></div>
+        <a href="{{ tool.url }}" target="_blank" rel="noopener nofollow">{{ '详情' if current_lang == 'zh' else 'Details' }} <span>↗</span></a>
       </article>
       {% endfor %}
     </div>
