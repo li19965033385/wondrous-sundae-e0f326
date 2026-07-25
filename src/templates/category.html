@@ -1,33 +1,24 @@
 {% extends "base.html" %}
-
 {% block content %}
 <section class="page-header">
-  <div class="container">
-    <div class="page-header-content fade-in">
-      <span class="page-icon">{{ category.icon }}</span>
-      <h1>{{ category.name_cn }}</h1>
-      <p class="page-desc">{{ category.desc }}</p>
-      <span class="page-count">{{ total }} 篇文章</span>
-    </div>
+  <div class="container page-header-content">
+    <span class="page-icon">{{ category.icon }}</span>
+    <h1 data-zh="{{ category.name_cn }}" data-en="{{ category.name }}">{{ category.name_cn }}</h1>
+    <p class="page-desc">{{ category.desc }}</p>
+    <span class="page-count" data-zh="{{ total }} 篇文章" data-en="{{ total }} articles">{{ total }} 篇文章</span>
   </div>
 </section>
-
 <section class="section">
   <div class="container">
-    <div class="ad-container">
-      <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7089877911189758" data-ad-slot="YOUR_AD_SLOT_HERE" data-ad-format="auto"></ins>
-      <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-    </div>
-
     <div class="archive-list">
       {% for article in articles %}
-      <article class="archive-item fade-in stagger-{{ loop.index if loop.index <= 6 else 6 }}">
+      <article class="archive-item">
         <div class="archive-meta">
-          <span class="archive-date">{{ article.date }}</span>
-          <span class="archive-read">{{ article.read_time|default(10) }} 分钟</span>
+          <span>{{ article.date }}</span>
+          <span data-zh="{{ article.read_time|default(10) }} 分钟" data-en="{{ article.read_time|default(10) }} min">{{ article.read_time|default(10) }} 分钟</span>
         </div>
-        <h2 class="archive-title"><a href="/article/{{ article.slug }}/">{{ article.title_cn|default(article.title) }}</a></h2>
-        <p class="archive-desc">{{ article.description_cn|default(article.description) }}</p>
+        <h2 class="archive-title"><a href="/article/{{ article.slug }}/" data-zh="{{ article.title_cn|default(article.title)|e }}" data-en="{{ article.title|e }}">{{ article.title_cn|default(article.title) }}</a></h2>
+        <p class="archive-desc" data-zh="{{ article.description_cn|default(article.description)|e }}" data-en="{{ article.description|e }}">{{ article.description_cn|default(article.description) }}</p>
         <div class="archive-tags">
           {% for tag in article.tags[:4] %}
           <a href="/tag/{{ slugify(tag) }}/" class="tag">#{{ tag }}</a>

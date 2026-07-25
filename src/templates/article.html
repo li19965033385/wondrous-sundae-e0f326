@@ -1,9 +1,4 @@
 {% extends "base.html" %}
-
-{% block extra_head %}
-<meta name="keywords" content="AI, {{ article.title }}, AI tools, {{ article.tags|join(', ') }}">
-{% endblock %}
-
 {% block content %}
 <article class="article-page">
   <div class="container">
@@ -12,52 +7,36 @@
         <header class="article-header">
           <div class="article-meta-top">
             <a href="/category/{{ article.category }}/" class="article-category-link">
-              {{ categories[article.category].icon }} {{ categories[article.category].name_cn }}
+              {{ categories[article.category].icon }} <span data-zh="{{ categories[article.category].name_cn }}" data-en="{{ categories[article.category].name }}">{{ categories[article.category].name_cn }}</span>
             </a>
-            <time datetime="{{ article.date }}">{{ article.date }}</time>
-            <span>{{ article.read_time|default(10) }} 分钟阅读</span>
+            <time>{{ article.date }}</time>
+            <span data-zh="{{ article.read_time|default(10) }} 分钟阅读" data-en="{{ article.read_time|default(10) }} min read">{{ article.read_time|default(10) }} 分钟阅读</span>
           </div>
-          <h1 class="article-title">{{ article.title_cn|default(article.title) }}</h1>
-          <p class="article-desc">{{ article.description_cn|default(article.description) }}</p>
+          <h1 class="article-title" data-zh="{{ article.title_cn|default(article.title)|e }}" data-en="{{ article.title|e }}">{{ article.title_cn|default(article.title) }}</h1>
+          <p class="article-desc" data-zh="{{ article.description_cn|default(article.description)|e }}" data-en="{{ article.description|e }}">{{ article.description_cn|default(article.description) }}</p>
           <div class="article-tags">
             {% for tag in article.tags %}
             <a href="/tag/{{ slugify(tag) }}/" class="tag">#{{ tag }}</a>
             {% endfor %}
           </div>
         </header>
-
-        <div class="ad-in-article">
-          <ins class="adsbygoogle" style="display:block;min-height:90px" data-ad-client="ca-pub-7089877911189758" data-ad-format="auto" data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
-        <div class="article-body">
-          {{ article.body|safe }}
-        </div>
-
-        <div class="ad-in-article">
-          <ins class="adsbygoogle" style="display:block;min-height:90px" data-ad-client="ca-pub-7089877911189758" data-ad-format="auto" data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
+        <div class="article-body">{{ article.body|safe }}</div>
         <div class="social-share">
-          <span class="social-share-label">📤 分享:</span>
-          <a href="https://twitter.com/intent/tweet?text={{ article.title|urlencode }}&url={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener" class="social-btn" style="background:#000;">𝕏 Twitter</a>
-          <a href="https://www.facebook.com/sharer/sharer.php?u={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener" class="social-btn" style="background:#1877f2;">📘 Facebook</a>
-          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener" class="social-btn" style="background:#0a66c2;">💼 LinkedIn</a>
-          <a href="https://api.whatsapp.com/send?text={{ article.title }} {{ site_url }}/article/{{ article.slug }}/" target="_blank" rel="noopener" class="social-btn" style="background:#25d366;">💬 WhatsApp</a>
-          <button onclick="navigator.clipboard.writeText('{{ site_url }}/article/{{ article.slug }}/').then(()=>{this.textContent='✅ 已复制!'});setTimeout(()=>{this.textContent='🔗 复制链接'},2000)" class="social-btn" style="background:var(--primary);border:none;cursor:pointer">🔗 复制链接</button>
+          <span class="social-share-label" data-zh="分享：" data-en="Share:">分享:</span>
+          <a href="https://twitter.com/intent/tweet?text={{ article.title|urlencode }}&url={{ site_url }}/article/{{ article.slug }}/" target="_blank" class="social-btn" style="background:#000;">𝕏 Twitter</a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ site_url }}/article/{{ article.slug }}/" target="_blank" class="social-btn" style="background:#1877f2;">📘 Facebook</a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ site_url }}/article/{{ article.slug }}/" target="_blank" class="social-btn" style="background:#0a66c2;">💼 LinkedIn</a>
+          <button onclick="navigator.clipboard.writeText('{{ site_url }}/article/{{ article.slug }}/').then(()=>{this.textContent='✅ 已复制!'});setTimeout(()=>{this.textContent='🔗 复制链接'},2000)" class="social-btn" style="background:var(--accent);color:var(--primary);border:none;cursor:pointer">🔗 复制链接</button>
         </div>
-
         {% if related %}
         <section class="related-articles">
-          <h2>📌 相关文章</h2>
+          <h2 data-zh="相关文章" data-en="Related articles">相关文章</h2>
           <div class="related-grid">
             {% for r in related %}
             <a href="/article/{{ r.slug }}/" class="related-card">
               <span class="related-icon">{{ categories[r.category].icon }}</span>
-              <h3>{{ r.title_cn|default(r.title) }}</h3>
-              <p>{{ r.description_cn|default(r.description)|truncate(80) }}</p>
+              <h3 data-zh="{{ r.title_cn|default(r.title)|e }}" data-en="{{ r.title|e }}">{{ r.title_cn|default(r.title) }}</h3>
+              <p data-zh="{{ r.description_cn|default(r.description)|truncate(80)|e }}" data-en="{{ r.description|truncate(80)|e }}">{{ r.description_cn|default(r.description)|truncate(80) }}</p>
               <span class="related-date">{{ r.date }}</span>
             </a>
             {% endfor %}
@@ -65,39 +44,18 @@
         </section>
         {% endif %}
       </div>
-
-      <aside class="article-sidebar">
-        <div class="ad-sidebar">
-          <ins class="adsbygoogle" style="display:block;min-height:250px" data-ad-client="ca-pub-7089877911189758" data-ad-format="auto" data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
-        {% if article.toc %}
-        <div class="sidebar-widget toc-widget">
-          <h3>📑 目录</h3>
-          <div id="tocList"></div>
-        </div>
-        {% endif %}
-
+      <aside>
+        <div class="ad-sidebar">广告</div>
         <div class="sidebar-widget">
-          <h3>📰 最新文章</h3>
+          <h3 data-zh="最新文章" data-en="Latest articles">最新文章</h3>
           <ul class="sidebar-post-list">
             {% for a in recent_articles[:6] %}
-            <li>
-              <a href="/article/{{ a.slug }}/">{{ a.title_cn|default(a.title) }}</a>
-              <span class="sidebar-post-date">{{ a.date }}</span>
-            </li>
+            <li><a href="/article/{{ a.slug }}/" data-zh="{{ a.title_cn|default(a.title)|e }}" data-en="{{ a.title|e }}">{{ a.title_cn|default(a.title) }}</a><span class="sidebar-post-date">{{ a.date }}</span></li>
             {% endfor %}
           </ul>
         </div>
-
-        <div class="ad-sidebar">
-          <ins class="adsbygoogle" style="display:block;min-height:250px" data-ad-client="ca-pub-7089877911189758" data-ad-format="auto" data-full-width-responsive="true"></ins>
-          <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </div>
-
         <div class="sidebar-widget">
-          <h3>🏷️ 热门标签</h3>
+          <h3 data-zh="热门标签" data-en="Popular tags">热门标签</h3>
           <div class="sidebar-tags">
             {% for tag in tags[:20] %}
             <a href="/tag/{{ slugify(tag) }}/" class="tag tag-sm">{{ tag }}</a>
@@ -108,26 +66,4 @@
     </div>
   </div>
 </article>
-{% endblock %}
-
-{% block extra_scripts %}
-{% if article.toc %}
-<script>
-(function() {
-  const headings = document.querySelectorAll('.article-body h2, .article-body h3');
-  const toc = document.getElementById('tocList');
-  if (!toc || headings.length < 2) return;
-  headings.forEach((h, i) => {
-    if (!h.id) h.id = 'heading-' + i;
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = '#' + h.id;
-    a.textContent = h.textContent;
-    if (h.tagName === 'H3') a.classList.add('toc-h3');
-    li.appendChild(a);
-    toc.appendChild(li);
-  });
-})();
-</script>
-{% endif %}
 {% endblock %}

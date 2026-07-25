@@ -1,27 +1,23 @@
 {% extends "base.html" %}
-
 {% block content %}
 <section class="page-header">
-  <div class="container">
-    <div class="page-header-content fade-in">
-      <h1>🏷️ {{ tag }}</h1>
-      <p class="page-desc">所有标记为"{{ tag }}"的文章</p>
-      <span class="page-count">{{ total }} 篇文章</span>
-    </div>
+  <div class="container page-header-content">
+    <h1>🏷️ {{ tag }}</h1>
+    <p class="page-desc" data-zh='所有标记为“{{ tag }}”的文章' data-en='All articles tagged “{{ tag }}”'>所有标记为“{{ tag }}”的文章</p>
+    <span class="page-count" data-zh="{{ total }} 篇文章" data-en="{{ total }} articles">{{ total }} 篇文章</span>
   </div>
 </section>
-
 <section class="section">
   <div class="container">
     <div class="archive-list">
       {% for article in articles %}
-      <article class="archive-item fade-in stagger-{{ loop.index if loop.index <= 6 else 6 }}">
+      <article class="archive-item">
         <div class="archive-meta">
-          <a href="/category/{{ article.category }}/" class="archive-category">{{ categories[article.category].icon }} {{ categories[article.category].name_cn }}</a>
-          <span class="archive-date">{{ article.date }}</span>
+          <a href="/category/{{ article.category }}/" class="archive-cat">{{ categories[article.category].icon }} {{ categories[article.category].name_cn }}</a>
+          <span>{{ article.date }}</span>
         </div>
-        <h2 class="archive-title"><a href="/article/{{ article.slug }}/">{{ article.title_cn|default(article.title) }}</a></h2>
-        <p class="archive-desc">{{ article.description_cn|default(article.description) }}</p>
+        <h2 class="archive-title"><a href="/article/{{ article.slug }}/" data-zh="{{ article.title_cn|default(article.title)|e }}" data-en="{{ article.title|e }}">{{ article.title_cn|default(article.title) }}</a></h2>
+        <p class="archive-desc" data-zh="{{ article.description_cn|default(article.description)|e }}" data-en="{{ article.description|e }}">{{ article.description_cn|default(article.description) }}</p>
         <div class="archive-tags">
           {% for t in article.tags[:5] %}
           <a href="/tag/{{ slugify(t) }}/" class="tag">#{{ t }}</a>
