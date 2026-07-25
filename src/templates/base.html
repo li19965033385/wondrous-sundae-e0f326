@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{ 'zh-CN' if current_lang == 'zh' else 'en' }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +10,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <meta name="robots" content="index, follow">
   <meta name="author" content="AI Tools Hub">
-  <link rel="alternate" hreflang="en" href="{{ site_url }}{{ page_url }}">
-  <link rel="alternate" hreflang="zh-CN" href="{{ site_url }}{{ page_url }}">
+  <link rel="alternate" hreflang="en" href="{{ english_url }}">
+  <link rel="alternate" hreflang="zh-CN" href="{{ chinese_url }}">
+  <link rel="alternate" hreflang="x-default" href="{{ english_url }}">
   <link rel="canonical" href="{{ site_url }}{{ page_url }}">
   <meta property="og:title" content="{{ page_title }}">
   <meta property="og:description" content="{{ page_description }}">
@@ -27,7 +28,7 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <a href="/" class="site-logo" aria-label="{{ site_name }} 首页">
+    <a href="{{ lang_prefix }}/" class="site-logo" aria-label="{{ site_name }}">
       <span class="logo-mark"><i></i>AI</span>
       <span class="logo-copy">{{ site_name }}<small>INTELLIGENCE DIRECTORY</small></span>
     </a>
@@ -38,24 +39,24 @@
     <nav class="site-nav">
       <button class="nav-toggle" id="navToggle">☰</button>
       <ul class="nav-list" id="navList">
-        <li><a href="/" data-i18n="nav.home">首页</a></li>
+        <li><a href="{{ lang_prefix }}/">{{ '首页' if current_lang == 'zh' else 'Home' }}</a></li>
         <li class="nav-dropdown">
-          <a href="javascript:void(0)"><span data-i18n="nav.categories">分类</span> <span class="dropdown-arrow">▾</span></a>
+          <a href="javascript:void(0)"><span>{{ '分类' if current_lang == 'zh' else 'Categories' }}</span> <span class="dropdown-arrow">▾</span></a>
           <div class="dropdown-menu">
             {% for cid, cat in categories.items() %}
-            <a href="/category/{{ cid }}/">{{ cat.icon }} <span data-zh="{{ cat.name_cn }}" data-en="{{ cat.name }}">{{ cat.name_cn }}</span></a>
+            <a href="{{ lang_prefix }}/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn if current_lang == 'zh' else cat.name }}</a>
             {% endfor %}
           </div>
         </li>
-        <li><a href="/tools/" class="nav-highlight"><span></span><b data-i18n="nav.tools">AI 工具</b></a></li>
+        <li><a href="{{ lang_prefix }}/tools/" class="nav-highlight"><span></span><b>{{ 'AI 工具' if current_lang == 'zh' else 'AI Tools' }}</b></a></li>
         <li class="nav-dropdown">
-          <a href="javascript:void(0)"><span data-i18n="nav.language">语言</span> <span class="dropdown-arrow">▾</span></a>
+          <a href="javascript:void(0)"><span>{{ '语言' if current_lang == 'zh' else 'Language' }}</span> <span class="dropdown-arrow">▾</span></a>
           <div class="dropdown-menu">
-            <a href="#" onclick="I18N.applyLang('en');return false">🇺🇸 English</a>
-            <a href="#" onclick="I18N.applyLang('zh-CN');return false">🇨🇳 中文</a>
+            <a href="{{ english_url }}">🇺🇸 English</a>
+            <a href="{{ chinese_url }}">🇨🇳 中文</a>
           </div>
         </li>
-        <li><a href="/about/" data-i18n="nav.about">关于</a></li>
+        <li><a href="{{ lang_prefix }}/about/">{{ '关于' if current_lang == 'zh' else 'About' }}</a></li>
         <li><a href="/rss.xml" data-i18n="nav.rss">RSS</a></li>
       </ul>
     </nav>
@@ -74,9 +75,9 @@
     <div class="footer-section">
       <h4 data-i18n="footer.quick_links">快速链接</h4>
       <ul>
-        <li><a href="/" data-i18n="footer.home">首页</a></li>
-        <li><a href="/tools/" data-i18n="footer.tools">AI工具</a></li>
-        <li><a href="/about/" data-i18n="footer.about">关于我们</a></li>
+        <li><a href="{{ lang_prefix }}/">{{ '首页' if current_lang == 'zh' else 'Home' }}</a></li>
+        <li><a href="{{ lang_prefix }}/tools/">{{ 'AI工具' if current_lang == 'zh' else 'AI Tools' }}</a></li>
+        <li><a href="{{ lang_prefix }}/about/">{{ '关于我们' if current_lang == 'zh' else 'About us' }}</a></li>
         <li><a href="/rss.xml" data-i18n="footer.rss">RSS订阅</a></li>
       </ul>
     </div>
@@ -84,7 +85,7 @@
       <h4 data-i18n="footer.popular_cats">热门分类</h4>
       <ul>
         {% for cid, cat in categories.items() %}{% if loop.index <= 5 %}
-        <li><a href="/category/{{ cid }}/">{{ cat.icon }} <span data-zh="{{ cat.name_cn }}" data-en="{{ cat.name }}">{{ cat.name_cn }}</span></a></li>
+        <li><a href="{{ lang_prefix }}/category/{{ cid }}/">{{ cat.icon }} {{ cat.name_cn if current_lang == 'zh' else cat.name }}</a></li>
         {% endif %}{% endfor %}
       </ul>
     </div>

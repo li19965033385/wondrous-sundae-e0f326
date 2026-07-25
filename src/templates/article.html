@@ -6,21 +6,21 @@
       <div class="article-main">
         <header class="article-header">
           <div class="article-meta-top">
-            <a href="/category/{{ article.category }}/" class="article-category-link">
-              {{ categories[article.category].icon }} <span data-zh="{{ categories[article.category].name_cn }}" data-en="{{ categories[article.category].name }}">{{ categories[article.category].name_cn }}</span>
+            <a href="{{ lang_prefix }}/category/{{ article.category }}/" class="article-category-link">
+              {{ categories[article.category].icon }} {{ categories[article.category].name_cn if current_lang == 'zh' else categories[article.category].name }}
             </a>
             <time>{{ article.date }}</time>
             <span data-zh="{{ article.read_time|default(10) }} 分钟阅读" data-en="{{ article.read_time|default(10) }} min read">{{ article.read_time|default(10) }} 分钟阅读</span>
           </div>
-          <h1 class="article-title" data-zh="{{ article.title_cn|default(article.title)|e }}" data-en="{{ article.title|e }}">{{ article.title_cn|default(article.title) }}</h1>
-          <p class="article-desc" data-zh="{{ article.description_cn|default(article.description)|e }}" data-en="{{ article.description|e }}">{{ article.description_cn|default(article.description) }}</p>
+          <h1 class="article-title">{{ article.title_cn|default(article.title) if current_lang == 'zh' else article.title }}</h1>
+          <p class="article-desc">{{ article.description_cn|default(article.description) if current_lang == 'zh' else article.description }}</p>
           <div class="article-tags">
             {% for tag in article.tags %}
-            <a href="/tag/{{ slugify(tag) }}/" class="tag">#{{ tag }}</a>
+            <a href="{{ lang_prefix }}/tag/{{ slugify(tag) }}/" class="tag">#{{ tag }}</a>
             {% endfor %}
           </div>
         </header>
-        <div class="article-body">{{ article.body|safe }}</div>
+        <div class="article-body">{{ article.body_cn|default(article.body)|safe if current_lang == 'zh' else article.body|safe }}</div>
         <div class="social-share">
           <span class="social-share-label" data-zh="分享：" data-en="Share:">分享:</span>
           <a href="https://twitter.com/intent/tweet?text={{ article.title|urlencode }}&url={{ site_url }}/article/{{ article.slug }}/" target="_blank" class="social-btn" style="background:#000;">𝕏 Twitter</a>
@@ -33,9 +33,9 @@
           <h2 data-zh="相关文章" data-en="Related articles">相关文章</h2>
           <div class="related-grid">
             {% for r in related %}
-            <a href="/article/{{ r.slug }}/" class="related-card">
+            <a href="{{ lang_prefix }}/article/{{ r.slug }}/" class="related-card">
               <span class="related-icon">{{ categories[r.category].icon }}</span>
-              <h3 data-zh="{{ r.title_cn|default(r.title)|e }}" data-en="{{ r.title|e }}">{{ r.title_cn|default(r.title) }}</h3>
+              <h3>{{ r.title_cn|default(r.title) if current_lang == 'zh' else r.title }}</h3>
               <p data-zh="{{ r.description_cn|default(r.description)|truncate(80)|e }}" data-en="{{ r.description|truncate(80)|e }}">{{ r.description_cn|default(r.description)|truncate(80) }}</p>
               <span class="related-date">{{ r.date }}</span>
             </a>
@@ -50,7 +50,7 @@
           <h3 data-zh="最新文章" data-en="Latest articles">最新文章</h3>
           <ul class="sidebar-post-list">
             {% for a in recent_articles[:6] %}
-            <li><a href="/article/{{ a.slug }}/" data-zh="{{ a.title_cn|default(a.title)|e }}" data-en="{{ a.title|e }}">{{ a.title_cn|default(a.title) }}</a><span class="sidebar-post-date">{{ a.date }}</span></li>
+            <li><a href="{{ lang_prefix }}/article/{{ a.slug }}/">{{ a.title_cn|default(a.title) if current_lang == 'zh' else a.title }}</a><span class="sidebar-post-date">{{ a.date }}</span></li>
             {% endfor %}
           </ul>
         </div>
@@ -58,7 +58,7 @@
           <h3 data-zh="热门标签" data-en="Popular tags">热门标签</h3>
           <div class="sidebar-tags">
             {% for tag in tags[:20] %}
-            <a href="/tag/{{ slugify(tag) }}/" class="tag tag-sm">{{ tag }}</a>
+            <a href="{{ lang_prefix }}/tag/{{ slugify(tag) }}/" class="tag tag-sm">{{ tag }}</a>
             {% endfor %}
           </div>
         </div>

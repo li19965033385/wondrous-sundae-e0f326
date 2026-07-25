@@ -637,13 +637,12 @@ window.I18N = (function() {
   };
 
   // ── State ─────────────────────────────────────────────────
-  let currentLang = localStorage.getItem('aiToolsLang') || 'zh-CN';
+  let currentLang = document.documentElement.lang === 'zh-CN' ? 'zh-CN' : 'en';
   const supportedLangs = Object.keys(STRINGS);
 
   // ── Init ───────────────────────────────────────────────────
   function init() {
-    const saved = localStorage.getItem('aiToolsLang');
-    if (saved && STRINGS[saved]) currentLang = saved;
+    // URL is the source of truth: /zh/ is Chinese, root paths are English.
     applyLang(currentLang);
   }
 

@@ -68,6 +68,11 @@ def build_breadcrumbs(items):
 class SiteGenerator:
     def __init__(self, articles, categories):
         self.articles = articles
+        translations_path = SRC / "translations_zh.json"
+        if translations_path.exists():
+            translations = json.loads(translations_path.read_text(encoding="utf-8"))
+            for article in self.articles:
+                article.update(translations.get(article.get("slug"), {}))
         self.categories = categories
         self.tags = self._build_tag_index()
         self.recent_articles = sorted(self.articles, key=lambda a: a["date"], reverse=True)
@@ -112,6 +117,18 @@ class SiteGenerator:
     def render_page(self, template_name, **kwargs):
         tpl = self.env.get_template(template_name)
         return tpl.render(**kwargs)
+
+    def language_context(self, lang, base_path):
+        """SEO-friendly language routing: English at /, Chinese at /zh/."""
+        prefix = "/zh" if lang == "zh" else ""
+        localized_path = f"{prefix}{base_path}" if base_path != "/" else ("/zh/" if lang == "zh" else "/")
+        return {
+            "current_lang": lang,
+            "lang_prefix": prefix,
+            "page_url": localized_path,
+            "english_url": f"{SITE_URL}{base_path}",
+            "chinese_url": f"{SITE_URL}{'/zh/' if base_path == '/' else '/zh' + base_path}",
+        }
 
     # ── JSON-LD helpers ──────────────────────────────────────────────
 
@@ -186,18 +203,18 @@ class SiteGenerator:
              "a": "Popular ways include content creation, AI consulting, building AI-powered apps, and offering AI training services."},
         ]
 
-        html = self.render_page("index.html",
-            featured=featured, cats=categories_data,
-            recent_articles=self.recent_articles[:10],
-            tags=list(self.tags.keys()),
-            website_ld=json.dumps(self.website_ld(), ensure_ascii=False),
-            faq_ld=json.dumps(self.faq_ld(faq), ensure_ascii=False),
-            breadcrumbs=json.dumps(build_breadcrumbs([("Home", "/")]), ensure_ascii=False),
-            page_title=f"{SITE_NAME} - {SITE_DESC}",
-            page_description=SITE_DESC,
-            page_url="/", og_type="website",
-        )
-        self._write("index.html", html)
+        for lang in ("en", "zh"):
+            ctx = self.language_context(lang, "/")
+            html = self.render_page("index.html",
+                featured=featured, cats=categories_data,
+                recent_articles=self.recent_articles[:10], tags=list(self.tags.keys()),
+                website_ld=json.dumps(self.website_ld(), ensure_ascii=False),
+                faq_ld=json.dumps(self.faq_ld(faq), ensure_ascii=False),
+                breadcrumbs=json.dumps(build_breadcrumbs([("Home", "/")]), ensure_ascii=False),
+                page_title=(f"{SITE_NAME} - {SITE_DESC}" if lang == "en" else f"{SITE_NAME} - {SITE_DESC_CN}"),
+                page_description=(SITE_DESC if lang == "en" else SITE_DESC_CN),
+                og_type="website", **ctx)
+            self._write("index.html" if lang == "en" else "zh/index.html", html)
 
     def generate_article(self, article):
         related = [a for a in self.articles
@@ -209,74 +226,75 @@ class SiteGenerator:
         ld_bread = build_breadcrumbs(crumbs)
         ld_all = [self.article_ld(article), ld_bread]
 
-        html = self.render_page("article.html",
-            article=article, related=related,
-            recent_articles=self.recent_articles,
-            tags=list(self.tags.keys()),
-            breadcrumbs=json.dumps(ld_bread, ensure_ascii=False),
-            ld_json=json.dumps(ld_all, ensure_ascii=False),
-            page_title=f"{article['title']} - {SITE_NAME}",
-            page_description=article.get("description", ""),
-            page_url=f"/article/{article['slug']}/",
-            og_type="article", og_image=article.get("og_image", "/img/og-default.jpg"),
-        )
-        self._write(f"article/{article['slug']}/index.html", html)
+        base_path = f"/article/{article['slug']}/"
+        for lang in ("en", "zh"):
+            ctx = self.language_context(lang, base_path)
+            html = self.render_page("article.html", article=article, related=related,
+                recent_articles=self.recent_articles, tags=list(self.tags.keys()),
+                breadcrumbs=json.dumps(ld_bread, ensure_ascii=False), ld_json=json.dumps(ld_all, ensure_ascii=False),
+                page_title=f"{article.get('title_cn', article['title']) if lang == 'zh' else article['title']} - {SITE_NAME}",
+                page_description=(article.get("description_cn", article.get("description", "")) if lang == "zh" else article.get("description", "")),
+                og_type="article", og_image=article.get("og_image", "/img/og-default.jpg"), **ctx)
+            path = f"article/{article['slug']}/index.html" if lang == "en" else f"zh/article/{article['slug']}/index.html"
+            self._write(path, html)
 
     def generate_category_pages(self):
         for cid, cat in self.categories.items():
             cat_arts = [a for a in self.articles if a.get("category") == cid]
             cat_arts.sort(key=lambda a: a["date"], reverse=True)
             crumbs = [("Home", "/"), (cat["name"], f"/category/{cid}/")]
-            html = self.render_page("category.html",
-                category=cat, category_id=cid, articles=cat_arts, total=len(cat_arts),
-                breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
-                page_title=f"{cat['name']} - {SITE_NAME}",
-                page_description=cat.get("desc", ""),
-                page_url=f"/category/{cid}/", og_type="website",
-            )
-            self._write(f"category/{cid}/index.html", html)
+            base_path = f"/category/{cid}/"
+            for lang in ("en", "zh"):
+                ctx = self.language_context(lang, base_path)
+                html = self.render_page("category.html", category=cat, category_id=cid, articles=cat_arts, total=len(cat_arts),
+                    breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
+                    page_title=f"{cat['name_cn'] if lang == 'zh' else cat['name']} - {SITE_NAME}",
+                    page_description=cat.get("desc", ""), og_type="website", **ctx)
+                path = f"category/{cid}/index.html" if lang == "en" else f"zh/category/{cid}/index.html"
+                self._write(path, html)
 
     def generate_tag_pages(self):
         for tag, tag_arts in self.tags.items():
             tag_arts.sort(key=lambda a: a["date"], reverse=True)
             slug = slugify(tag)
             crumbs = [("Home", "/"), (f"Tag: {tag}", f"/tag/{slug}/")]
-            html = self.render_page("tag.html",
-                tag=tag, tag_slug=slug, articles=tag_arts, total=len(tag_arts),
-                breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
-                page_title=f"{tag} - {SITE_NAME}",
-                page_description=f"Articles about {tag} - AI tools, tutorials and resources",
-                page_url=f"/tag/{slug}/", og_type="website",
-            )
-            self._write(f"tag/{slug}/index.html", html)
+            base_path = f"/tag/{slug}/"
+            for lang in ("en", "zh"):
+                ctx = self.language_context(lang, base_path)
+                html = self.render_page("tag.html", tag=tag, tag_slug=slug, articles=tag_arts, total=len(tag_arts),
+                    breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False), page_title=f"{tag} - {SITE_NAME}",
+                    page_description=(f"所有关于 {tag} 的文章" if lang == "zh" else f"Articles about {tag} - AI tools, tutorials and resources"),
+                    og_type="website", **ctx)
+                path = f"tag/{slug}/index.html" if lang == "en" else f"zh/tag/{slug}/index.html"
+                self._write(path, html)
 
     def generate_about_page(self):
         crumbs = [("Home", "/"), ("About", "/about/")]
-        html = self.render_page("about.html",
-            breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
-            page_title=f"About {SITE_NAME}",
-            page_description="Learn about AI Tools Hub - your guide to AI tools and resources",
-            page_url="/about/", og_type="website",
-        )
-        self._write("about/index.html", html)
+        for lang in ("en", "zh"):
+            ctx = self.language_context(lang, "/about/")
+            html = self.render_page("about.html", breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
+                page_title=(f"About {SITE_NAME}" if lang == "en" else f"关于 {SITE_NAME}"),
+                page_description=("Learn about AI Tools Hub - your guide to AI tools and resources" if lang == "en" else SITE_DESC_CN),
+                og_type="website", **ctx)
+            self._write("about/index.html" if lang == "en" else "zh/about/index.html", html)
 
     def generate_404_page(self):
-        html = self.render_page("404.html",
+        html = self.render_page("404.html", **self.language_context("en", "/404.html"),
             page_title="Page Not Found",
             page_description="The page you are looking for does not exist.",
-            page_url="/404.html", og_type="website",
+            og_type="website",
         )
         self._write("404.html", html)
 
     def generate_tools_page(self):
         crumbs = [("Home", "/"), ("AI Tools", "/tools/")]
-        html = self.render_page("tools.html",
-            breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
-            page_title=f"AI Tools - {SITE_NAME}",
-            page_description="Free online AI tools - image filters, color palette, QR code generator, prompt builder and more.",
-            page_url="/tools/", og_type="website",
-        )
-        self._write("tools/index.html", html)
+        for lang in ("en", "zh"):
+            ctx = self.language_context(lang, "/tools/")
+            html = self.render_page("tools.html", breadcrumbs=json.dumps(build_breadcrumbs(crumbs), ensure_ascii=False),
+                page_title=f"AI Tools - {SITE_NAME}",
+                page_description="Free online AI tools - image filters, color palette, QR code generator, prompt builder and more.",
+                og_type="website", **ctx)
+            self._write("tools/index.html" if lang == "en" else "zh/tools/index.html", html)
 
 
     def generate_videos_page(self):
@@ -310,31 +328,34 @@ class SiteGenerator:
         urlset = Element("urlset")
         urlset.set("xmlns", "http://www.sitemaps.org/schemas/sitemap/0.9")
 
-        for path, prio, freq in [("/", "1.0", "daily"), ("/about/", "0.7", "monthly"), ("/tools/", "0.8", "weekly"), ("/videos/", "0.7", "weekly")]:
+        for path, prio, freq in [("/", "1.0", "daily"), ("/zh/", "1.0", "daily"), ("/about/", "0.7", "monthly"), ("/zh/about/", "0.7", "monthly"), ("/tools/", "0.8", "weekly"), ("/zh/tools/", "0.8", "weekly"), ("/videos/", "0.7", "weekly")]:
             url = SubElement(urlset, "url")
             SubElement(url, "loc").text = f"{SITE_URL}{path}"
             SubElement(url, "priority").text = prio
             SubElement(url, "changefreq").text = freq
 
         for a in self.articles:
-            url = SubElement(urlset, "url")
-            SubElement(url, "loc").text = f"{SITE_URL}/article/{a['slug']}/"
-            SubElement(url, "lastmod").text = a.get("date", "")
-            SubElement(url, "priority").text = "0.8"
-            SubElement(url, "changefreq").text = "weekly"
+            for prefix in ("", "/zh"):
+                url = SubElement(urlset, "url")
+                SubElement(url, "loc").text = f"{SITE_URL}{prefix}/article/{a['slug']}/"
+                SubElement(url, "lastmod").text = a.get("date", "")
+                SubElement(url, "priority").text = "0.8"
+                SubElement(url, "changefreq").text = "weekly"
 
         for cid in self.categories:
-            url = SubElement(urlset, "url")
-            SubElement(url, "loc").text = f"{SITE_URL}/category/{cid}/"
-            SubElement(url, "priority").text = "0.6"
-            SubElement(url, "changefreq").text = "weekly"
+            for prefix in ("", "/zh"):
+                url = SubElement(urlset, "url")
+                SubElement(url, "loc").text = f"{SITE_URL}{prefix}/category/{cid}/"
+                SubElement(url, "priority").text = "0.6"
+                SubElement(url, "changefreq").text = "weekly"
 
         for tag in self.tags:
             slug = slugify(tag)
-            url = SubElement(urlset, "url")
-            SubElement(url, "loc").text = f"{SITE_URL}/tag/{slug}/"
-            SubElement(url, "priority").text = "0.4"
-            SubElement(url, "changefreq").text = "daily"
+            for prefix in ("", "/zh"):
+                url = SubElement(urlset, "url")
+                SubElement(url, "loc").text = f"{SITE_URL}{prefix}/tag/{slug}/"
+                SubElement(url, "priority").text = "0.4"
+                SubElement(url, "changefreq").text = "daily"
 
         raw = tostring(urlset, encoding="unicode")
         dom = minidom.parseString(raw)

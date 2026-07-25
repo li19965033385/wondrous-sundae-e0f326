@@ -20,9 +20,9 @@
       </div>
       <div class="hero-trust">
         <span>热门探索</span>
-        <a href="/tag/chatgpt/">ChatGPT</a>
-        <a href="/tag/midjourney/">Midjourney</a>
-        <a href="/category/ai-coding/">AI 编程</a>
+        <a href="{{ lang_prefix }}/tag/chatgpt/">ChatGPT</a>
+        <a href="{{ lang_prefix }}/tag/midjourney/">Midjourney</a>
+        <a href="{{ lang_prefix }}/category/ai-coding/">AI Coding</a>
       </div>
     </div>
     <div class="hero-console" aria-label="AI 工具数据概览">
@@ -64,22 +64,22 @@
         <h2 data-zh="即开即用的智能工具箱" data-en="Smart tools, ready when you are">即开即用的智能工具箱</h2>
         <p data-zh="无需注册，在浏览器中完成高频创作任务。" data-en="No registration. Complete everyday creative tasks in your browser.">无需注册，在浏览器中完成高频创作任务。</p>
       </div>
-      <a href="/tools/" class="text-link">查看全部工具 <span>→</span></a>
+      <a href="{{ lang_prefix }}/tools/" class="text-link">查看全部工具 <span>→</span></a>
     </div>
     <div class="tools-showcase">
-      <a href="/tools/#image-filter" class="showcase-card showcase-featured">
+      <a href="{{ lang_prefix }}/tools/#image-filter" class="showcase-card showcase-featured">
         <div class="card-index">01</div><span class="card-icon icon-image">✦</span>
         <div><span class="card-kicker">IMAGE LAB</span><h3>智能图片工作台</h3><p>滤镜、增强与视觉处理，释放图像表达力。</p></div><span class="card-arrow">↗</span>
       </a>
-      <a href="/tools/#prompt" class="showcase-card">
+      <a href="{{ lang_prefix }}/tools/#prompt" class="showcase-card">
         <div class="card-index">02</div><span class="card-icon">⌁</span>
         <div><span class="card-kicker">PROMPT SYSTEM</span><h3>Prompt 构建器</h3><p>将模糊想法转化为清晰、可复用的提示词。</p></div><span class="card-arrow">↗</span>
       </a>
-      <a href="/tools/#palette" class="showcase-card">
+      <a href="{{ lang_prefix }}/tools/#palette" class="showcase-card">
         <div class="card-index">03</div><span class="card-icon">◈</span>
         <div><span class="card-kicker">COLOR ENGINE</span><h3>智能配色提取</h3><p>从图片提取专业色板，快速建立视觉语言。</p></div><span class="card-arrow">↗</span>
       </a>
-      <a href="/tools/#qr" class="showcase-card">
+      <a href="{{ lang_prefix }}/tools/#qr" class="showcase-card">
         <div class="card-index">04</div><span class="card-icon">⌗</span>
         <div><span class="card-kicker">UTILITY</span><h3>QR 生成器</h3><p>快速生成清晰、稳定、可分享的二维码。</p></div><span class="card-arrow">↗</span>
       </a>
@@ -94,7 +94,7 @@
     </div>
     <div class="cat-grid cat-grid-premium">
       {% for cat in cats %}
-      <a href="/category/{{ cat.id }}/" class="cat-card">
+      <a href="{{ lang_prefix }}/category/{{ cat.id }}/" class="cat-card">
         <span class="cat-number">0{{ loop.index }}</span>
         <span class="cat-icon">{{ cat.icon }}</span>
         <h3 data-zh="{{ cat.name_cn }}" data-en="{{ cat.name }}">{{ cat.name_cn }}</h3>
@@ -117,16 +117,16 @@
         {% for article in featured %}
         <article class="editorial-card{% if loop.first %} editorial-lead{% endif %}">
           <div class="editorial-meta"><span>{{ categories[article.category].name_cn }}</span><time>{{ article.date }}</time></div>
-          <h3><a href="/article/{{ article.slug }}/" data-zh="{{ article.title_cn|default(article.title)|e }}" data-en="{{ article.title|e }}">{{ article.title_cn|default(article.title) }}</a></h3>
+          <h3><a href="{{ lang_prefix }}/article/{{ article.slug }}/">{{ article.title_cn|default(article.title) if current_lang == 'zh' else article.title }}</a></h3>
           <p data-zh="{{ article.description_cn|default(article.description)|e }}" data-en="{{ article.description|e }}">{{ article.description_cn|default(article.description) }}</p>
-          <a href="/article/{{ article.slug }}/" class="read-more">阅读全文 <span>↗</span></a>
+          <a href="{{ lang_prefix }}/article/{{ article.slug }}/" class="read-more">{{ '阅读全文' if current_lang == 'zh' else 'Read article' }} <span>↗</span></a>
         </article>
         {% endfor %}
       </div>
       <aside class="latest-panel">
         <div class="latest-head"><span>最新发布</span><i>LIVE</i></div>
         {% for article in recent_articles[:8] %}
-        <a href="/article/{{ article.slug }}/" class="latest-row">
+        <a href="{{ lang_prefix }}/article/{{ article.slug }}/" class="latest-row">
           <span class="latest-index">{{ "%02d"|format(loop.index) }}</span>
           <span class="latest-copy"><b data-zh="{{ article.title_cn|default(article.title)|e }}" data-en="{{ article.title|e }}">{{ article.title_cn|default(article.title) }}</b><small><span data-zh="{{ categories[article.category].name_cn }}" data-en="{{ categories[article.category].name }}">{{ categories[article.category].name_cn }}</span> · {{ article.date }}</small></span>
           <span class="latest-arrow">→</span>
