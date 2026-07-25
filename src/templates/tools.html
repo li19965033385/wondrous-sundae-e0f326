@@ -3,26 +3,56 @@
 {% block extra_head %}
 <meta name="keywords" content="AI tools, online image editor, QR code generator, color palette, AI tools online, free AI tools">
 <style>
+:root { --tool-cyan:#22d3ee; --tool-violet:#8b5cf6; --tool-ink:#07111f; }
+.tool-page-shell { position:relative; overflow:hidden; background:
+  radial-gradient(circle at 8% 5%,rgba(34,211,238,.12),transparent 28%),
+  radial-gradient(circle at 91% 2%,rgba(139,92,246,.14),transparent 30%); }
+.tool-page-shell:before { content:""; position:absolute; inset:0; pointer-events:none; opacity:.32;
+  background-image:linear-gradient(rgba(99,102,241,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,.08) 1px,transparent 1px);
+  background-size:42px 42px; mask-image:linear-gradient(to bottom,#000,transparent 48%); }
 .tool-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
-.tool-header { text-align: center; margin-bottom: 48px; }
-.tool-header h1 { font-size: 2.2em; font-weight: 700; margin-bottom: 12px; }
+.tool-header { position:relative; text-align:center; margin-bottom:26px; padding:46px 20px 22px; }
+.tool-kicker { display:inline-flex; align-items:center; gap:8px; padding:7px 12px; border:1px solid rgba(34,211,238,.28); border-radius:99px; color:var(--tool-cyan); background:rgba(34,211,238,.07); font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; }
+.live-dot { width:7px; height:7px; border-radius:50%; background:#34d399; box-shadow:0 0 0 5px rgba(52,211,153,.12); animation:toolPulse 2s infinite; }
+@keyframes toolPulse { 50% { box-shadow:0 0 0 9px rgba(52,211,153,0); } }
+.tool-header h1 { font-size:clamp(2.25rem,6vw,4.4rem); letter-spacing:-.055em; line-height:1.05; font-weight:800; margin:20px 0 14px; }
+.tool-header h1 span { color:transparent; background:linear-gradient(100deg,var(--primary),var(--tool-cyan)); background-clip:text; -webkit-background-clip:text; }
 .tool-header p { color: var(--text-secondary); font-size: 1.05em; }
+.tool-command { max-width:760px; margin:28px auto 0; position:relative; display:flex; align-items:center; gap:10px; padding:9px 10px 9px 18px; border-radius:18px; border:1px solid rgba(99,102,241,.25); background:color-mix(in srgb,var(--bg-card) 88%,transparent); box-shadow:0 18px 60px rgba(15,23,42,.12); backdrop-filter:blur(18px); }
+.tool-command:focus-within { border-color:var(--tool-cyan); box-shadow:0 18px 65px rgba(34,211,238,.12); }
+.tool-command-icon { color:var(--tool-cyan); font-size:1.2rem; }
+.tool-command input { flex:1; min-width:0; border:0; outline:0; background:transparent; color:var(--text); font-size:1rem; padding:10px 0; }
+.command-key { border:1px solid var(--border); border-radius:8px; padding:5px 8px; color:var(--text-muted); font-size:.72rem; background:var(--bg-alt); }
+.smart-answer { max-width:760px; margin:10px auto 0; padding:12px 16px; text-align:left; border-radius:12px; color:var(--text-secondary); font-size:.88rem; display:none; background:rgba(34,211,238,.07); border:1px solid rgba(34,211,238,.18); }
+.smart-answer.show { display:block; animation:answerIn .25s ease; }
+@keyframes answerIn { from { opacity:0; transform:translateY(-5px); } }
+.tool-overview { display:grid; grid-template-columns:1.6fr 1fr 1fr; gap:12px; margin:0 auto 24px; }
+.overview-card { padding:18px; border:1px solid var(--border); border-radius:16px; background:color-mix(in srgb,var(--bg-card) 92%,transparent); }
+.overview-card strong { display:block; font-size:1.45rem; margin-top:7px; }
+.overview-label { color:var(--text-muted); font-size:.76rem; text-transform:uppercase; letter-spacing:.08em; }
+.privacy-card { background:linear-gradient(135deg,rgba(16,185,129,.11),rgba(34,211,238,.06)); }
+.privacy-card strong { font-size:.95rem; color:#10b981; }
 
-.tool-tabs { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+.tool-section-label { display:flex; justify-content:space-between; align-items:center; margin:28px 0 14px; }
+.tool-section-label h2 { font-size:1rem; margin:0; }
+.tool-count { color:var(--text-muted); font-size:.8rem; }
+.tool-tabs { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:34px; }
 .tool-tab {
-  padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border);
-  background: var(--bg-card); cursor: pointer; font-size: 0.9em; font-weight: 500;
-  transition: all 0.3s; color: var(--text-secondary);
+  min-height:82px; padding:14px; border-radius:14px; border:1px solid var(--border); text-align:left;
+  background:var(--bg-card); cursor:pointer; font-size:.88em; font-weight:600; transition:all .25s; color:var(--text-secondary);
 }
-.tool-tab:hover { border-color: var(--primary-light); color: var(--primary); }
-.tool-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+.tool-tab:after { content:"立即使用  →"; display:block; margin-top:8px; font-size:.7rem; color:var(--text-muted); font-weight:500; }
+.tool-tab:hover { border-color:var(--tool-cyan); color:var(--text); transform:translateY(-3px); box-shadow:0 12px 28px rgba(15,23,42,.1); }
+.tool-tab.active { background:linear-gradient(135deg,var(--primary),#7c3aed); color:#fff; border-color:transparent; box-shadow:0 12px 32px rgba(99,102,241,.26); }
+.tool-tab.active:after { color:rgba(255,255,255,.7); content:"正在使用  ●"; }
+.tool-tab[hidden] { display:none; }
 
 .tool-panel { display: none; }
 .tool-panel.active { display: block; }
 
 .tool-box {
-  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
-  padding: 32px; max-width: 700px; margin: 0 auto;
+  background:color-mix(in srgb,var(--bg-card) 94%,transparent); border:1px solid rgba(99,102,241,.2); border-radius:22px;
+  padding:clamp(20px,4vw,38px); max-width:780px; margin:0 auto; box-shadow:0 24px 70px rgba(15,23,42,.08); backdrop-filter:blur(18px);
 }
 .tool-box h2 { font-size: 1.3em; margin-bottom: 8px; }
 .tool-box .tool-desc { color: var(--text-secondary); font-size: 0.92em; margin-bottom: 24px; }
@@ -79,20 +109,44 @@
 
 .cv-container { position: relative; display: inline-block; }
 #bgCanvas { max-width: 100%; border-radius: 8px; }
+.utility-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.utility-field { width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--bg); color:var(--text); font:inherit; outline:none; }
+.utility-field:focus { border-color:var(--tool-cyan); box-shadow:0 0 0 3px rgba(34,211,238,.1); }
+textarea.utility-field { min-height:150px; resize:vertical; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.86rem; line-height:1.6; }
+.utility-result { margin-top:14px; padding:14px; border-radius:12px; background:var(--bg-alt); border:1px solid var(--border); color:var(--text-secondary); white-space:pre-wrap; overflow-wrap:anywhere; font-size:.88rem; }
+.password-output { font:700 1.05rem ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.03em; color:var(--tool-cyan); }
+.check-row { display:flex; gap:14px; flex-wrap:wrap; margin:12px 0; color:var(--text-secondary); font-size:.84rem; }
 
 @media (max-width: 600px) {
   .filter-controls { grid-template-columns: 1fr; }
   .tool-box { padding: 20px; }
+  .tool-tabs { grid-template-columns:1fr 1fr; }
+  .tool-overview { grid-template-columns:1fr 1fr; }
+  .overview-card:first-child { grid-column:1/-1; }
+  .command-key { display:none; }
+  .utility-grid { grid-template-columns:1fr; }
 }
 </style>
-<script src="/static/js/tools-enhanced.js"></script>
 {% endblock %}
 
 {% block content %}
-<div class="tool-container">
+<div class="tool-page-shell"><div class="tool-container">
   <div class="tool-header">
-    <h1 data-i18n="tools.page.title">⚡ 在线AI工具箱</h1>
-    <p data-i18n="tools.page.desc">免费使用在线AI工具 — 图片处理、颜色提取、QR码生成等</p>
+    <div class="tool-kicker"><span class="live-dot"></span> AI Workspace · Browser Native</div>
+    <h1>一个更聪明的<br><span>AI 创作工作台</span></h1>
+    <p>从你的目标出发，快速找到并运行合适的工具。图片、内容、设计与效率，一站完成。</p>
+    <div class="tool-command" role="search">
+      <span class="tool-command-icon">⌕</span>
+      <input id="toolSearch" type="search" autocomplete="off" placeholder="告诉我你想做什么，例如：提取图片配色、制作二维码…" aria-label="搜索工具">
+      <span class="command-key">⌘ K</span>
+    </div>
+    <div class="smart-answer" id="smartAnswer" aria-live="polite"></div>
+  </div>
+
+  <div class="tool-overview">
+    <div class="overview-card privacy-card"><span class="overview-label">隐私模式</span><strong>✓ 文件仅在你的浏览器中处理</strong></div>
+    <div class="overview-card"><span class="overview-label">可用工具</span><strong>19 <small>个</small></strong></div>
+    <div class="overview-card"><span class="overview-label">最近使用</span><strong id="recentTool">尚未开始</strong></div>
   </div>
 
     <!-- Ad Banner -->
@@ -104,6 +158,7 @@
          data-full-width-responsive="true"></ins>
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
+  <div class="tool-section-label"><h2>智能工具矩阵</h2><span class="tool-count" id="toolCount">19 个工具</span></div>
   <div class="tool-tabs" id="toolTabs">
     <button class="tool-tab active" data-tab="image-filter" data-i18n="tools.image_filter">🎨 图片滤镜</button>
     <button class="tool-tab" data-tab="palette" data-i18n="tools.palette">🌈 颜色提取</button>
@@ -118,6 +173,12 @@
     <button class="tool-tab" data-tab="design" data-i18n="tools.design">🎯 设计工坊</button>
     <button class="tool-tab" data-tab="automation" data-i18n="tools.automation">⚙️ 自动化</button>
     <button class="tool-tab" data-tab="health">🏥 AI健康</button>
+    <button class="tool-tab" data-tab="json">{ } JSON格式化</button>
+    <button class="tool-tab" data-tab="base64">⇄ Base64转换</button>
+    <button class="tool-tab" data-tab="password">🔐 密码生成器</button>
+    <button class="tool-tab" data-tab="timestamp">⏱ 时间戳转换</button>
+    <button class="tool-tab" data-tab="url-codec">🔗 URL编解码</button>
+    <button class="tool-tab" data-tab="text-cleaner">✍️ 文本整理</button>
   </div>
 
   <!-- ═══ Image Filter ═══ -->
@@ -366,7 +427,6 @@
     </div>
   </div>
   <!-- ═══ AI Automation Hub ═══ -->
-  <div class="tool-panel" id="panel-automation">
   <!-- ═══ AI Health Calculator ═══ -->
   <div class="tool-panel" id="panel-health">
     <div class="tool-box">
@@ -418,6 +478,7 @@
       <div class="tool-result" id="healthResults" style="margin-top:16px"></div>
     </div>
   </div>
+  <div class="tool-panel" id="panel-automation">
     <div class="tool-box">
       <h2>⚙️ 自动化工作台</h2>
       <p class="tool-desc">任务管理 + 专注计时器</p>
@@ -443,6 +504,106 @@
       </div>
     </div>
   </div>
+  <!-- ═══ JSON Formatter ═══ -->
+  <div class="tool-panel" id="panel-json">
+    <div class="tool-box">
+      <h2>{ } JSON 格式化与校验</h2>
+      <p class="tool-desc">格式化、压缩并检查 JSON 语法，数据不会上传服务器</p>
+      <textarea class="utility-field" id="jsonInput" spellcheck="false" placeholder='粘贴 JSON，例如：{"name":"AI Tools"}'></textarea>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="jsonFormat">格式化</button>
+        <button class="btn-secondary-tool" id="jsonMinify">压缩</button>
+        <button class="btn-secondary-tool" id="jsonCopy">复制结果</button>
+      </div>
+      <div class="utility-result" id="jsonResult">等待输入 JSON…</div>
+    </div>
+  </div>
+
+  <!-- ═══ Base64 ═══ -->
+  <div class="tool-panel" id="panel-base64">
+    <div class="tool-box">
+      <h2>⇄ Base64 编码 / 解码</h2>
+      <p class="tool-desc">支持中文与 Emoji 的 Base64 文本转换</p>
+      <textarea class="utility-field" id="base64Input" placeholder="输入要编码或解码的文本…"></textarea>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="base64Encode">编码</button>
+        <button class="btn-secondary-tool" id="base64Decode">解码</button>
+        <button class="btn-secondary-tool" id="base64Copy">复制结果</button>
+      </div>
+      <div class="utility-result" id="base64Result">转换结果将显示在这里</div>
+    </div>
+  </div>
+
+  <!-- ═══ Password Generator ═══ -->
+  <div class="tool-panel" id="panel-password">
+    <div class="tool-box">
+      <h2>🔐 安全密码生成器</h2>
+      <p class="tool-desc">使用浏览器加密随机数生成密码，不记录、不上传</p>
+      <label class="tool-desc">长度：<strong id="passwordLengthValue">20</strong> 位</label>
+      <input type="range" id="passwordLength" min="8" max="64" value="20" style="width:100%">
+      <div class="check-row">
+        <label><input type="checkbox" id="passwordUpper" checked> 大写字母</label>
+        <label><input type="checkbox" id="passwordLower" checked> 小写字母</label>
+        <label><input type="checkbox" id="passwordNumber" checked> 数字</label>
+        <label><input type="checkbox" id="passwordSymbol" checked> 特殊符号</label>
+      </div>
+      <div class="utility-result password-output" id="passwordResult"></div>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="passwordGenerate">重新生成</button>
+        <button class="btn-secondary-tool" id="passwordCopy">复制密码</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Timestamp ═══ -->
+  <div class="tool-panel" id="panel-timestamp">
+    <div class="tool-box">
+      <h2>⏱ 时间戳转换器</h2>
+      <p class="tool-desc">Unix 时间戳与本地日期时间双向转换</p>
+      <div class="utility-grid">
+        <div><label class="tool-desc">Unix 时间戳（秒或毫秒）</label><input class="utility-field" id="timestampInput" inputmode="numeric"></div>
+        <div><label class="tool-desc">日期和时间</label><input class="utility-field" id="dateTimeInput" type="datetime-local"></div>
+      </div>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="timestampToDate">转换为日期</button>
+        <button class="btn-secondary-tool" id="dateToTimestamp">转换为时间戳</button>
+        <button class="btn-secondary-tool" id="timestampNow">使用当前时间</button>
+      </div>
+      <div class="utility-result" id="timestampResult">等待转换…</div>
+    </div>
+  </div>
+
+  <!-- ═══ URL Codec ═══ -->
+  <div class="tool-panel" id="panel-url-codec">
+    <div class="tool-box">
+      <h2>🔗 URL 编码 / 解码</h2>
+      <p class="tool-desc">处理中文链接、查询参数和特殊字符</p>
+      <textarea class="utility-field" id="urlCodecInput" placeholder="输入链接或需要处理的文本…"></textarea>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="urlEncode">编码</button>
+        <button class="btn-secondary-tool" id="urlDecode">解码</button>
+        <button class="btn-secondary-tool" id="urlCodecCopy">复制结果</button>
+      </div>
+      <div class="utility-result" id="urlCodecResult">转换结果将显示在这里</div>
+    </div>
+  </div>
+
+  <!-- ═══ Text Cleaner ═══ -->
+  <div class="tool-panel" id="panel-text-cleaner">
+    <div class="tool-box">
+      <h2>✍️ 智能文本整理</h2>
+      <p class="tool-desc">清除多余空格、空行或重复行，适合整理复制来的文本</p>
+      <textarea class="utility-field" id="textCleanerInput" placeholder="粘贴需要整理的文本…"></textarea>
+      <div class="tool-actions">
+        <button class="btn-primary-tool" id="textCleanSpaces">清理空格</button>
+        <button class="btn-secondary-tool" id="textCleanLines">删除空行</button>
+        <button class="btn-secondary-tool" id="textDedupe">行去重</button>
+        <button class="btn-secondary-tool" id="textCleanerCopy">复制结果</button>
+      </div>
+      <div class="utility-result" id="textCleanerResult">等待处理文本…</div>
+    </div>
+  </div>
+
   <div class="tool-panel" id="panel-tts">
     <div class="tool-box">
       <h2>🔊 文字转语音</h2>
@@ -466,7 +627,7 @@
       </div>
     </div>
   </div>
-</div>
+</div></div>
 <script src="/static/js/tools-enhanced.js"></script>
 {% endblock %}
 
@@ -478,9 +639,88 @@ document.querySelectorAll('.tool-tab').forEach(tab => {
     document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
-    document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    const panel = document.getElementById('panel-' + tab.dataset.tab);
+    if (!panel) return;
+    panel.classList.add('active');
+    history.replaceState(null, '', '#' + tab.dataset.tab);
+    localStorage.setItem('luaiRecentTool', tab.textContent.trim());
+    document.getElementById('recentTool').textContent = tab.textContent.replace(/^\S+\s*/, '').trim();
+    panel.scrollIntoView({ behavior:'smooth', block:'start' });
   });
 });
+
+/* ═══ Smart tool discovery ═══ */
+(function () {
+  const input = document.getElementById('toolSearch');
+  const answer = document.getElementById('smartAnswer');
+  const count = document.getElementById('toolCount');
+  const recent = document.getElementById('recentTool');
+  const tabs = [...document.querySelectorAll('.tool-tab')];
+  const intents = {
+    'image-filter':'图片 修图 滤镜 亮度 对比度 饱和度 模糊 filter photo',
+    'palette':'颜色 配色 色卡 提取 品牌 color palette',
+    'qr':'二维码 链接 qr code 网址',
+    'prompt':'提示词 prompt 写作 提问 ai 文案',
+    'bg-remove':'抠图 去背景 透明 背景 remove background',
+    'tts':'语音 朗读 配音 文字转语音 tts speech',
+    'image-gen':'生成图片 海报 抽象 背景 art image',
+    'video-studio':'视频 截帧 封面 video frame',
+    'ppt':'幻灯片 演示 ppt presentation slides',
+    'office':'字数 文本 分析 阅读时间 office text',
+    'design':'设计 配色 互补色 色彩 design',
+    'automation':'任务 待办 专注 计时 效率 todo timer',
+    'health':'健康 bmi 热量 体重 代谢 health',
+    'json':'json 格式化 校验 压缩 开发 数据 formatter validator',
+    'base64':'base64 编码 解码 转换 encode decode',
+    'password':'密码 随机 安全 password generate',
+    'timestamp':'时间戳 日期 unix timestamp date',
+    'url-codec':'url 链接 编码 解码 中文 参数 encode decode',
+    'text-cleaner':'文本 整理 空格 空行 去重 清洗 clean text'
+  };
+  const stored = localStorage.getItem('luaiRecentTool');
+  if (stored) recent.textContent = stored.replace(/^\S+\s*/, '').trim();
+
+  function score(tab, query) {
+    const haystack = (tab.textContent + ' ' + (intents[tab.dataset.tab] || '')).toLowerCase();
+    return query.split(/\s+/).filter(Boolean).reduce((n, word) => n + (haystack.includes(word) ? 1 : 0), 0);
+  }
+  function search() {
+    const query = input.value.trim().toLowerCase();
+    let visible = 0;
+    let best = null;
+    let bestScore = 0;
+    tabs.forEach(tab => {
+      const points = query ? score(tab, query) : 1;
+      tab.hidden = points === 0;
+      if (points) visible++;
+      if (points > bestScore) { bestScore = points; best = tab; }
+    });
+    count.textContent = visible + ' 个工具';
+    if (!query) { answer.classList.remove('show'); return; }
+    if (best) {
+      answer.innerHTML = `智能推荐：<strong>${best.textContent.trim()}</strong> 最适合当前任务。按 Enter 立即打开，所有处理均在本机完成。`;
+      answer.classList.add('show');
+      input.dataset.best = best.dataset.tab;
+    } else {
+      answer.textContent = '暂时没有完全匹配的工具。试试“图片”“文字”“设计”或“效率”。';
+      answer.classList.add('show');
+      delete input.dataset.best;
+    }
+  }
+  input.addEventListener('input', search);
+  input.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && input.dataset.best) {
+      document.querySelector(`.tool-tab[data-tab="${input.dataset.best}"]`)?.click();
+    }
+  });
+  document.addEventListener('keydown', event => {
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      event.preventDefault(); input.focus(); input.select();
+    }
+  });
+  const fromHash = location.hash.slice(1);
+  if (fromHash) document.querySelector(`.tool-tab[data-tab="${fromHash}"]`)?.click();
+})();
 
 /* ═══ Generic Upload Helper ═══ */
 function setupUpload(zoneId, inputId, callback) {
@@ -756,7 +996,7 @@ function setupUpload(zoneId, inputId, callback) {
     select.innerHTML = '';
     const zhVoices = voices.filter(v => v.lang.startsWith('zh'));
     const enVoices = voices.filter(v => v.lang.startsWith('en'));
-    const preferred = [...zhVoices, ...enVoices, ...voices];
+    const preferred = [...zhVoices, ...enVoices];
     const added = new Set();
     preferred.forEach(v => {
       if (!added.has(v.name)) {
@@ -767,6 +1007,12 @@ function setupUpload(zoneId, inputId, callback) {
         select.appendChild(opt);
       }
     });
+    if (!preferred.length) {
+      const opt = document.createElement('option');
+      opt.textContent = '当前浏览器未安装中文或英文语音';
+      opt.value = '';
+      select.appendChild(opt);
+    }
   }
   if (synth) { loadVoices(); if (synth.onvoiceschanged !== undefined) synth.onvoiceschanged = loadVoices; }
 
@@ -789,6 +1035,101 @@ function setupUpload(zoneId, inputId, callback) {
 
   document.getElementById('ttsStop').addEventListener('click', () => { synth.cancel(); });
 })();
+
+/* ═══ Practical Utilities ═══ */
+(function() {
+  const copyText = async (text, button) => {
+    if (!text) return;
+    await navigator.clipboard.writeText(text);
+    const old = button.textContent; button.textContent = '✓ 已复制';
+    setTimeout(() => button.textContent = old, 1200);
+  };
+
+  const jsonInput = document.getElementById('jsonInput');
+  const jsonResult = document.getElementById('jsonResult');
+  function transformJson(spaces) {
+    try {
+      jsonResult.textContent = JSON.stringify(JSON.parse(jsonInput.value), null, spaces);
+      jsonResult.style.color = 'var(--text)';
+    } catch (error) {
+      jsonResult.textContent = '格式错误：' + error.message;
+      jsonResult.style.color = '#ef4444';
+    }
+  }
+  document.getElementById('jsonFormat')?.addEventListener('click', () => transformJson(2));
+  document.getElementById('jsonMinify')?.addEventListener('click', () => transformJson(0));
+  document.getElementById('jsonCopy')?.addEventListener('click', e => copyText(jsonResult.textContent, e.currentTarget));
+
+  const b64Input = document.getElementById('base64Input');
+  const b64Result = document.getElementById('base64Result');
+  document.getElementById('base64Encode')?.addEventListener('click', () => {
+    try { b64Result.textContent = btoa(String.fromCharCode(...new TextEncoder().encode(b64Input.value))); }
+    catch (error) { b64Result.textContent = '编码失败：' + error.message; }
+  });
+  document.getElementById('base64Decode')?.addEventListener('click', () => {
+    try { b64Result.textContent = new TextDecoder().decode(Uint8Array.from(atob(b64Input.value.trim()), c => c.charCodeAt(0))); }
+    catch (error) { b64Result.textContent = '解码失败：请检查 Base64 内容'; }
+  });
+  document.getElementById('base64Copy')?.addEventListener('click', e => copyText(b64Result.textContent, e.currentTarget));
+
+  const lengthInput = document.getElementById('passwordLength');
+  const passwordResult = document.getElementById('passwordResult');
+  function generatePassword() {
+    const groups = [];
+    if (document.getElementById('passwordUpper').checked) groups.push('ABCDEFGHJKLMNPQRSTUVWXYZ');
+    if (document.getElementById('passwordLower').checked) groups.push('abcdefghijkmnopqrstuvwxyz');
+    if (document.getElementById('passwordNumber').checked) groups.push('23456789');
+    if (document.getElementById('passwordSymbol').checked) groups.push('!@#$%^&*_-+=?');
+    if (!groups.length) { passwordResult.textContent = '请至少选择一种字符'; return; }
+    const chars = groups.join('');
+    const random = new Uint32Array(Number(lengthInput.value));
+    crypto.getRandomValues(random);
+    let result = groups.map((group, i) => group[random[i] % group.length]);
+    for (let i = result.length; i < random.length; i++) result.push(chars[random[i] % chars.length]);
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = random[i] % (i + 1); [result[i], result[j]] = [result[j], result[i]];
+    }
+    passwordResult.textContent = result.join('');
+  }
+  lengthInput?.addEventListener('input', () => { document.getElementById('passwordLengthValue').textContent = lengthInput.value; generatePassword(); });
+  document.querySelectorAll('#panel-password input[type="checkbox"]').forEach(el => el.addEventListener('change', generatePassword));
+  document.getElementById('passwordGenerate')?.addEventListener('click', generatePassword);
+  document.getElementById('passwordCopy')?.addEventListener('click', e => copyText(passwordResult.textContent, e.currentTarget));
+  generatePassword();
+
+  const tsInput = document.getElementById('timestampInput');
+  const dtInput = document.getElementById('dateTimeInput');
+  const tsResult = document.getElementById('timestampResult');
+  function useNow() {
+    const now = new Date(); tsInput.value = Math.floor(now.getTime() / 1000);
+    dtInput.value = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0,16);
+    tsResult.textContent = `本地时间：${now.toLocaleString()}\nISO：${now.toISOString()}`;
+  }
+  document.getElementById('timestampNow')?.addEventListener('click', useNow);
+  document.getElementById('timestampToDate')?.addEventListener('click', () => {
+    let value = Number(tsInput.value); if (!Number.isFinite(value)) return tsResult.textContent = '请输入有效时间戳';
+    if (String(Math.trunc(value)).length <= 10) value *= 1000;
+    const date = new Date(value); tsResult.textContent = isNaN(date) ? '无效时间戳' : `本地时间：${date.toLocaleString()}\nISO：${date.toISOString()}`;
+  });
+  document.getElementById('dateToTimestamp')?.addEventListener('click', () => {
+    const date = new Date(dtInput.value); tsResult.textContent = isNaN(date) ? '请选择有效日期' : `秒：${Math.floor(date.getTime()/1000)}\n毫秒：${date.getTime()}`;
+  });
+  useNow();
+
+  const urlInput = document.getElementById('urlCodecInput');
+  const urlResult = document.getElementById('urlCodecResult');
+  document.getElementById('urlEncode')?.addEventListener('click', () => urlResult.textContent = encodeURIComponent(urlInput.value));
+  document.getElementById('urlDecode')?.addEventListener('click', () => {
+    try { urlResult.textContent = decodeURIComponent(urlInput.value); } catch { urlResult.textContent = '解码失败：链接格式不正确'; }
+  });
+  document.getElementById('urlCodecCopy')?.addEventListener('click', e => copyText(urlResult.textContent, e.currentTarget));
+
+  const cleanInput = document.getElementById('textCleanerInput');
+  const cleanResult = document.getElementById('textCleanerResult');
+  document.getElementById('textCleanSpaces')?.addEventListener('click', () => cleanResult.textContent = cleanInput.value.replace(/[ \t]+/g, ' ').replace(/ *\n */g, '\n').trim());
+  document.getElementById('textCleanLines')?.addEventListener('click', () => cleanResult.textContent = cleanInput.value.split('\n').filter(line => line.trim()).join('\n'));
+  document.getElementById('textDedupe')?.addEventListener('click', () => cleanResult.textContent = [...new Set(cleanInput.value.split('\n').map(line => line.trim()).filter(Boolean))].join('\n'));
+  document.getElementById('textCleanerCopy')?.addEventListener('click', e => copyText(cleanResult.textContent, e.currentTarget));
+})();
 </script>
-<script src="/static/js/tools-enhanced.js"></script>
 {% endblock %}
