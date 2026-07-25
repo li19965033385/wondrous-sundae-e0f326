@@ -296,6 +296,50 @@ class SiteGenerator:
                 og_type="website", **ctx)
             self._write("tools/index.html" if lang == "en" else "zh/tools/index.html", html)
 
+    def generate_ai_directory(self):
+        categories = [
+            {"id":"chat","name":"Chat & Assistants","name_zh":"聊天助手"},
+            {"id":"image","name":"Image & Design","name_zh":"图像设计"},
+            {"id":"video","name":"Video & Audio","name_zh":"视频音频"},
+            {"id":"code","name":"Coding","name_zh":"编程开发"},
+            {"id":"productivity","name":"Productivity","name_zh":"效率办公"},
+        ]
+        cat_map = {c["id"]: c for c in categories}
+        raw_tools = [
+            ("ChatGPT","chat","General-purpose AI assistant for writing, reasoning and research.","适用于写作、推理与研究的通用 AI 助手。","Freemium","免费增值","https://chatgpt.com/"),
+            ("Claude","chat","Thoughtful AI assistant for analysis, documents and coding.","擅长分析、长文档与编程的 AI 助手。","Freemium","免费增值","https://claude.ai/"),
+            ("Gemini","chat","Google's multimodal assistant connected to its ecosystem.","连接 Google 生态的多模态 AI 助手。","Freemium","免费增值","https://gemini.google.com/"),
+            ("Perplexity","chat","AI answer engine with web research and source citations.","带网页研究与来源引用的 AI 答案引擎。","Freemium","免费增值","https://www.perplexity.ai/"),
+            ("DeepSeek","chat","AI assistant focused on reasoning and technical tasks.","专注推理与技术任务的 AI 助手。","Free","免费","https://chat.deepseek.com/"),
+            ("Midjourney","image","High-quality AI image generation for creative professionals.","面向创意专业人士的高质量 AI 图像生成工具。","Paid","付费","https://www.midjourney.com/"),
+            ("Adobe Firefly","image","Generative AI for images, effects and design workflows.","用于图像、特效与设计工作流的生成式 AI。","Freemium","免费增值","https://firefly.adobe.com/"),
+            ("Canva AI","image","AI-powered visual design, presentations and social content.","AI 驱动的视觉设计、演示与社交内容平台。","Freemium","免费增值","https://www.canva.com/ai-image-generator/"),
+            ("Leonardo AI","image","AI image creation with styles and production controls.","提供丰富风格与生产控制的 AI 图像创作平台。","Freemium","免费增值","https://leonardo.ai/"),
+            ("Ideogram","image","AI image generator known for typography and graphic design.","擅长文字排版与平面设计的 AI 图像生成器。","Freemium","免费增值","https://ideogram.ai/"),
+            ("Runway","video","Generative video creation and AI-assisted editing suite.","生成式视频创作与 AI 辅助编辑套件。","Freemium","免费增值","https://runwayml.com/"),
+            ("ElevenLabs","video","Natural AI voice generation, dubbing and audio tools.","自然 AI 语音生成、配音与音频工具。","Freemium","免费增值","https://elevenlabs.io/"),
+            ("Suno","video","Create complete songs and music from text prompts.","通过文字提示生成完整歌曲与音乐。","Freemium","免费增值","https://suno.com/"),
+            ("Descript","video","Edit video and podcasts as easily as editing text.","像编辑文字一样编辑视频与播客。","Freemium","免费增值","https://www.descript.com/"),
+            ("Cursor","code","AI-native code editor for understanding and building software.","用于理解和构建软件的 AI 原生代码编辑器。","Freemium","免费增值","https://www.cursor.com/"),
+            ("GitHub Copilot","code","AI coding assistant integrated into developer workflows.","集成到开发工作流中的 AI 编程助手。","Paid","付费","https://github.com/features/copilot"),
+            ("Replit","code","Browser development environment with AI coding capabilities.","具备 AI 编程能力的浏览器开发环境。","Freemium","免费增值","https://replit.com/"),
+            ("v0","code","Generate web interfaces and application prototypes with AI.","使用 AI 生成网页界面与应用原型。","Freemium","免费增值","https://v0.dev/"),
+            ("Notion AI","productivity","AI writing, search and knowledge tools inside Notion.","集成在 Notion 中的 AI 写作、搜索与知识工具。","Paid","付费","https://www.notion.so/product/ai"),
+            ("Gamma","productivity","Create presentations, documents and webpages with AI.","使用 AI 创建演示文稿、文档与网页。","Freemium","免费增值","https://gamma.app/"),
+            ("Otter.ai","productivity","Meeting transcription, summaries and searchable notes.","会议转录、摘要与可搜索笔记工具。","Freemium","免费增值","https://otter.ai/"),
+            ("Zapier AI","productivity","Automate workflows and connect apps using AI.","使用 AI 自动化工作流并连接各种应用。","Freemium","免费增值","https://zapier.com/ai"),
+        ]
+        tools = []
+        for name, cat, desc, desc_zh, price, price_zh, url in raw_tools:
+            tools.append({"name":name,"category":cat,"category_name":cat_map[cat]["name"],"category_name_zh":cat_map[cat]["name_zh"],"description":desc,"description_zh":desc_zh,"price":price,"price_zh":price_zh,"url":url})
+        for lang in ("en", "zh"):
+            ctx = self.language_context(lang, "/ai-directory/")
+            html = self.render_page("ai_directory.html", tools=tools, directory_categories=categories,
+                page_title=("AI Directory - Discover the Best AI Tools" if lang == "en" else "AI 工具目录 - 发现优质 AI 产品"),
+                page_description=("A curated directory of AI tools for chat, design, video, coding and productivity." if lang == "en" else "精选 AI 工具目录，覆盖聊天、设计、视频、编程与效率办公。"),
+                og_type="website", **ctx)
+            self._write("ai-directory/index.html" if lang == "en" else "zh/ai-directory/index.html", html)
+
 
     def generate_videos_page(self):
         """Generate video gallery page with embedded YouTube tutorials."""
@@ -502,6 +546,8 @@ Sitemap: {SITE_URL}/sitemap_baidu.xml
         self.generate_404_page()
         print("🔧 Tools page...")
         self.generate_tools_page()
+        print("🧭 AI Directory...")
+        self.generate_ai_directory()
         print("🎬 Videos page...")
         self.generate_videos_page()
         print("🗺️  Sitemap...")

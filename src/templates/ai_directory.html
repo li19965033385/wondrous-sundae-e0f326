@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-header directory-hero">
+  <div class="container page-header-content">
+    <span class="eyebrow">CURATED AI ECOSYSTEM</span>
+    <h1>{{ 'AI 工具目录' if current_lang == 'zh' else 'AI Directory' }}</h1>
+    <p class="page-desc">{{ '发现、比较并选择适合你的优质 AI 产品。' if current_lang == 'zh' else 'Discover, compare and choose the right AI products for your workflow.' }}</p>
+    <span class="page-count">{{ tools|length }} {{ '款精选工具' if current_lang == 'zh' else 'curated tools' }}</span>
+  </div>
+</section>
+<section class="section directory-section">
+  <div class="container">
+    <div class="directory-controls">
+      <div class="directory-search"><span>⌕</span><input id="directorySearch" type="search" placeholder="{{ '搜索 AI 工具…' if current_lang == 'zh' else 'Search AI tools…' }}"></div>
+      <div class="directory-filters" id="directoryFilters">
+        <button class="active" data-filter="all">{{ '全部' if current_lang == 'zh' else 'All' }}</button>
+        {% for cat in directory_categories %}<button data-filter="{{ cat.id }}">{{ cat.name_zh if current_lang == 'zh' else cat.name }}</button>{% endfor %}
+      </div>
+    </div>
+    <div class="directory-grid" id="directoryGrid">
+      {% for tool in tools %}
+      <article class="directory-card" data-category="{{ tool.category }}" data-search="{{ tool.name|lower }} {{ tool.description|lower }} {{ tool.description_zh }}">
+        <div class="directory-card-top"><span class="directory-logo">{{ tool.name[:2]|upper }}</span><span class="directory-price {{ tool.price|lower }}">{{ tool.price_zh if current_lang == 'zh' else tool.price }}</span></div>
+        <div><span class="directory-category">{{ tool.category_name_zh if current_lang == 'zh' else tool.category_name }}</span><h2>{{ tool.name }}</h2><p>{{ tool.description_zh if current_lang == 'zh' else tool.description }}</p></div>
+        <a href="{{ tool.url }}" target="_blank" rel="noopener nofollow">{{ '访问工具' if current_lang == 'zh' else 'Visit tool' }} <span>↗</span></a>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="directory-empty" id="directoryEmpty">{{ '没有找到匹配的工具。' if current_lang == 'zh' else 'No matching tools found.' }}</div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+(function(){
+  var input=document.getElementById('directorySearch'), buttons=document.querySelectorAll('#directoryFilters button'), cards=document.querySelectorAll('.directory-card'), empty=document.getElementById('directoryEmpty'), filter='all';
+  function update(){var q=(input.value||'').toLowerCase().trim(),shown=0;cards.forEach(function(card){var ok=(filter==='all'||card.dataset.category===filter)&&(!q||card.dataset.search.includes(q));card.hidden=!ok;if(ok)shown++;});empty.style.display=shown?'none':'block';}
+  buttons.forEach(function(button){button.addEventListener('click',function(){buttons.forEach(function(b){b.classList.remove('active')});button.classList.add('active');filter=button.dataset.filter;update();});});input.addEventListener('input',update);
+})();
+</script>
+{% endblock %}
