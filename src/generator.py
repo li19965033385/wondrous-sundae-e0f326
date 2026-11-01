@@ -342,6 +342,7 @@ class SiteGenerator:
             ("GitHub Copilot","code","AI coding assistant integrated into developer workflows.","集成到开发工作流中的 AI 编程助手。","Paid","付费","https://github.com/features/copilot"),
             ("Replit","code","Browser development environment with AI coding capabilities.","具备 AI 编程能力的浏览器开发环境。","Freemium","免费增值","https://replit.com/"),
             ("v0","code","Generate web interfaces and application prototypes with AI.","使用 AI 生成网页界面与应用原型。","Freemium","免费增值","https://v0.dev/"),
+            ("agent-qa","code","Natural-language web/mobile testing with memidex memory and validated self-improvement. Model/infrastructure costs apply.","自然语言 Web / 移动端测试，支持 memidex 持久记忆与经验证的自我改进；模型和基础设施费用另计。","Free CLI","免费 CLI","https://vostride.com"),
             ("Notion AI","productivity","AI writing, search and knowledge tools inside Notion.","集成在 Notion 中的 AI 写作、搜索与知识工具。","Paid","付费","https://www.notion.so/product/ai"),
             ("Gamma","productivity","Create presentations, documents and webpages with AI.","使用 AI 创建演示文稿、文档与网页。","Freemium","免费增值","https://gamma.app/"),
             ("Otter.ai","productivity","Meeting transcription, summaries and searchable notes.","会议转录、摘要与可搜索笔记工具。","Freemium","免费增值","https://otter.ai/"),
